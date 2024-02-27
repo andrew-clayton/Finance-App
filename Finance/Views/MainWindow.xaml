@@ -1,0 +1,136 @@
+﻿<mah:MetroWindow x:Class="Finance.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:local="clr-namespace:Finance"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen" ResizeMode="CanResizeWithGrip"
+        Title="Financial Management" Height="750" Width="1250">
+    <Grid>
+        <TabControl Name="tcList">
+            <TabItem Header="Overview">
+                <!--This will be a grid split into 6 - 2 rows, 3 columns-->
+                <!--This is defined as a 2x2 on a higher level, but the bottom rom will span both columns and have a subgrid split into 3 columns-->
+                <Grid ShowGridLines="True">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!--End of grid definitions-->
+
+                    <!--Top row, first half-->
+                    <Grid Grid.Row="0" Grid.Column="0">
+
+                    </Grid>
+
+                    <!--Top row, second half-->
+                    <Grid Grid.Row="0" Grid.Column="1">
+
+                    </Grid>
+
+                    <!--Bottom half-->
+                    <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ShowGridLines="True">
+                        <!--Split into three columns-->
+                        <Grid.ColumnDefinitions>
+                            <!--First third-->
+                            <ColumnDefinition Width="*" />
+
+                            <!--Second third-->
+                            <ColumnDefinition Width="*" />
+
+                            <!--Third third-->
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+
+                </Grid>
+            </TabItem>
+
+            <!--..................................................................................................................................-->
+
+            <TabItem Header="Edit">
+                <Grid ShowGridLines="True">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!--End of grid definitions-->
+
+                    <!--Top row has a subgrid with 3 columns-->
+                    <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" ShowGridLines="True">
+                        <!--3 columns-->
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        
+                        <!--content-->
+                    </Grid>
+
+                    <!--Bottom row, first half-->
+                    <Grid Grid.Row="1" Grid.Column="0">
+
+                    </Grid>
+                    
+                    <!--Bottom row, second half-->
+                    <Grid Grid.Row="1" Grid.Column="1">
+                        <!--content-->
+                    </Grid>
+
+                </Grid>
+            </TabItem>
+
+            <!--..................................................................................................................................-->
+
+            <TabItem Header="History">
+            <!--This has two columns. The first column has two rows, the second has one row.-->
+                <Grid ShowGridLines="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <!--First column-->
+                    <Grid Grid.Column="0" ShowGridLines="True">
+                        <!--This is split into two rows-->
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        
+                        <!--First row-->
+                        <Grid Grid.Row="0">
+                            
+                        </Grid>
+                        
+                        <!--Second row-->
+                        <Grid Grid.Row="1">
+                            
+                        </Grid>
+                    </Grid>
+                    <!--End of first column-->
+                    
+                    <!--Second column-->
+                    <Grid Grid.Column="1"></Grid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</mah:MetroWindow>
