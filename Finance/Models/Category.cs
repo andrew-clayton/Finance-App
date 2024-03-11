@@ -12,6 +12,7 @@ namespace Finance.Models
         Grocery,
         Utility,
         DiningOut,
-        Personal
+        Personal,
+        Misc
     }
 }

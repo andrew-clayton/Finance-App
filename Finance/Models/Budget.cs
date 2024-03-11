@@ -11,9 +11,10 @@ namespace Finance.Models
 {
     public class Budget
     {
+        public int BudgetId { get; set; }
         public Category BudgetCategory{ get; set; }
         public float BudgetAmount { get; set; }
-        public List<Transaction> Transactions { get; set; } = new List<Transaction>();
+        public List<ATransaction> Transactions { get; set; } = new List<ATransaction>();
 
         [NotMapped]
         public float SpentAmount => Transactions.Sum(t => t.Value);

@@ -10,7 +10,7 @@ namespace Finance.Models
 {
     public class FinanceContext : DbContext
     {
-        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<ATransaction> Transactions { get; set; }
         public DbSet<Budget> Budgets { get; set; }
         public string DbPath { get; set; }
 
@@ -18,11 +18,12 @@ namespace Finance.Models
         {
             var folder = AppDomain.CurrentDomain.BaseDirectory;
             DbPath = Path.Combine(folder, "finance.db");
+            //DbPath = @"C:\Users\andre\source\repos\Finance\Finance\bin\Debug\net8.0-windows\finance.db";
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("$Data Source={DbPath}");
+            optionsBuilder.UseSqlite($"Data Source={DbPath}");
         }
 
     }
