@@ -75,7 +75,6 @@ namespace Finance.Models
         {
             var transactionList = await GetAllTransactionsAsync();
             var revenueList = new List<ATransaction>();
-            float revenueTotal = new 
 
             foreach (var item in transactionList)
             {
@@ -83,22 +82,19 @@ namespace Finance.Models
             }
             return revenueList;
         }
-        public async Tuple GetExpenseListAsync()
+        public async Task<List<ATransaction>> GetExpenseListAsync()
         {
             var transactionList = await GetAllTransactionsAsync();
             var expenseList = new List<ATransaction>();
-            float expenseTotal = 0;
 
             foreach (var item in transactionList)
             {
                 if (item.Value < 0)
                 {
                     expenseList.Add(item);
-                    expenseTotal += item.Value;
                 }
             }
-            (List<ATransaction>, float) tuple = (expenseList, (expenseTotal * -1));
-            return tuple;
+            return expenseList;
         }
 
 
