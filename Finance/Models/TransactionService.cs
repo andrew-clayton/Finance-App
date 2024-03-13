@@ -10,52 +10,95 @@ namespace Finance.Models
 {
     public class TransactionService
     {
-        private readonly FinanceContext _context;
-        public TransactionService(FinanceContext context)
+        //private readonly FinanceContext _context;
+        public TransactionService()
         {
-            _context = context;
+            //_context = context;
         }
 
         // Read
         public async Task<List<ATransaction>> GetAllTransactionsAsync()
         {
-            return await _context.Transactions.ToListAsync();
+            using (var context = new FinanceContext())
+                return await context.Transactions.ToListAsync();
         }
 
         // Add
         public async Task AddTransaction(ATransaction transaction)
         {
-            _context.Transactions.Add(transaction);
-            await _context.SaveChangesAsync();
+            using (var context = new FinanceContext())
+            {
+                context.Transactions.Add(transaction);
+                await context.SaveChangesAsync();
+            }
+            return;
         }
 
         public async Task<List<ATransaction>> FindTransactionWithBudget(Category budget)
         {
-            var budgetQuery = 
-                from item in _context.Transactions 
-                where (item.Budget == budget)
-                select item;
+            using (var context = new FinanceContext())
+            {
+                var budgetQuery =
+                    from item in context.Transactions
+                    where (item.Budget == budget)
+                    select item;
 
-            return await budgetQuery.ToListAsync();
+                return await budgetQuery.ToListAsync();
+            }
         }
 
         // Delete
         public async Task DeleteTransaction(int transactionId)
         {
-            var transaction = await _context.Transactions.FindAsync(transactionId);
-            if (transaction != null)
+            using (var context = new FinanceContext())
             {
-                // remove the transaction from the context
-                _context.Transactions.Remove(transaction);
+                var transaction = await context.Transactions.FindAsync(transactionId);
+                if (transaction != null)
+                {
 
-                // Asynchronously save the changes to the database
-                await _context.SaveChangesAsync();
+                    // remove the transaction from the context
+                    context.Transactions.Remove(transaction);
+
+                    // Asynchronously save the changes to the database
+                    await context.SaveChangesAsync();
+                }
             }
         }
 
         public int GetTransactionCount()
         {
-            return _context.Transactions.Count();
+            using var context = new FinanceContext();
+            return context.Transactions.Count();
+        }
+
+        public async Task<List<ATransaction>> GetRevenueListAsync()
+        {
+            var transactionList = await GetAllTransactionsAsync();
+            var revenueList = new List<ATransaction>();
+            float revenueTotal = new 
+
+            foreach (var item in transactionList)
+            {
+                if (item.Value > 0) revenueList.Add(item);
+            }
+            return revenueList;
+        }
+        public async Tuple GetExpenseListAsync()
+        {
+            var transactionList = await GetAllTransactionsAsync();
+            var expenseList = new List<ATransaction>();
+            float expenseTotal = 0;
+
+            foreach (var item in transactionList)
+            {
+                if (item.Value < 0)
+                {
+                    expenseList.Add(item);
+                    expenseTotal += item.Value;
+                }
+            }
+            (List<ATransaction>, float) tuple = (expenseList, (expenseTotal * -1));
+            return tuple;
         }
 
 

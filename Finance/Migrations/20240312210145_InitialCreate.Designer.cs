@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Finance.Migrations
 {
     [DbContext(typeof(FinanceContext))]
-    [Migration("20240306231135_InitialCreate")]
+    [Migration("20240312210145_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -20,26 +20,9 @@ namespace Finance.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
 
-            modelBuilder.Entity("Finance.Models.Budget", b =>
+            modelBuilder.Entity("Finance.Models.ATransaction", b =>
                 {
-                    b.Property<int>("BudgetId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<float>("BudgetAmount")
-                        .HasColumnType("REAL");
-
-                    b.Property<int>("BudgetCategory")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("BudgetId");
-
-                    b.ToTable("Budgets");
-                });
-
-            modelBuilder.Entity("Finance.Models.Transaction", b =>
-                {
-                    b.Property<int>("TransactionId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -66,14 +49,31 @@ namespace Finance.Migrations
                     b.Property<float>("Value")
                         .HasColumnType("REAL");
 
-                    b.HasKey("TransactionId");
+                    b.HasKey("Id");
 
                     b.HasIndex("BudgetId");
 
                     b.ToTable("Transactions");
                 });
 
-            modelBuilder.Entity("Finance.Models.Transaction", b =>
+            modelBuilder.Entity("Finance.Models.Budget", b =>
+                {
+                    b.Property<int>("BudgetId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<float>("BudgetAmount")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("BudgetCategory")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("BudgetId");
+
+                    b.ToTable("Budgets");
+                });
+
+            modelBuilder.Entity("Finance.Models.ATransaction", b =>
                 {
                     b.HasOne("Finance.Models.Budget", null)
                         .WithMany("Transactions")

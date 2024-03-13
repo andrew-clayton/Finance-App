@@ -29,7 +29,7 @@ namespace Finance.Migrations
                 name: "Transactions",
                 columns: table => new
                 {
-                    TransactionId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Value = table.Column<float>(type: "REAL", nullable: false),
                     TimeStamp = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -41,7 +41,7 @@ namespace Finance.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Transactions", x => x.TransactionId);
+                    table.PrimaryKey("PK_Transactions", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Transactions_Budgets_BudgetId",
                         column: x => x.BudgetId,

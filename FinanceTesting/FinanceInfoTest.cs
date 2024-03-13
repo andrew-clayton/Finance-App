@@ -13,12 +13,12 @@ namespace Finance.Test
 {
     public class FinanceInfoTest
     {
-        private TransactionService transactionService = new TransactionService(new FinanceContext());
+        private TransactionService transactionService = new TransactionService();
         List<ATransaction> transactionList = new List<ATransaction>();
 
         public FinanceInfoTest()
         {
-
+            RefreshList();
         }
         private async void RefreshList()
         {
@@ -36,7 +36,9 @@ namespace Finance.Test
         }
         public async void SimulateTransactionsDone()
         {
-            if (transactionService.GetTransactionCount() != 0) return;
+            int numOfTransactions = transactionService.GetTransactionCount();
+            if (numOfTransactions > 1)
+                return;
 
             string[] reasons = { "Insurance", "Trader Joe's", "Cane's", "Target", "Costco", "Tuition" };
             Category[] categories = { Category.None, Category.Grocery, Category.DiningOut, Category.Misc, Category.Personal, Category.Utility };
@@ -46,7 +48,7 @@ namespace Finance.Test
             {
                 await transactionService.AddTransaction(new ATransaction()
                 {
-                    Id = i,
+                    //Id = i+1,
                     Value = random.Next(-500, 500),
                     TimeStamp = DateTime.Now.AddDays(random.Next(-30, 0)),
                     IsReoccuring = false,
