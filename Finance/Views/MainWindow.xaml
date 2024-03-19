@@ -17,11 +17,11 @@
                 <Grid ShowGridLines="True">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
-
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
@@ -31,53 +31,25 @@
                     <!--Top row, first half-->
                     <Grid Grid.Row="0" Grid.Column="0">
                         <!--This section will be split into three columns-->
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-                            <StackPanel Grid.Row="0" Grid.Column="0" >
-                                <!--The first column will the be monthly net value-->
-                                <TextBlock Text="This month's net income is: $20" FontSize="30" Margin="5" />
-                                <!--<TextBlock Text="{Binding valueTemporaryVariable, StringFormat='This month\'s monthly net was ${0}'}" />-->
-                                <!--the variable here is pending a better name, and data binding-->
-                            </StackPanel>
-
-
-                            <!--The second column will be split into two rows, money earnt and money spent-->
-                            <Grid Grid.Column="1">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
-
-                                <TextBlock Grid.Row="0" Text="$3214 earned this month" FontSize="20" Foreground="LimeGreen" TextWrapping="Wrap"/>
-                                <!--<TextBlock Grid.Row="0" Text="{Binding tempVaraible, StringFormat='${0} earned this month'}" />-->
-
-                                <TextBlock Grid.Row="1" Text="$2162 spent this month" FontSize="20" Foreground="OrangeRed" TextWrapping="Wrap"/>
-                                <!--<TextBlock Grid.Row="0" Text="{Binding tempVaraible, StringFormat='${0} earned this month'}" />-->
-                            </Grid>
-
-                            <!--The third column will be a pie chart to show the net as a representation of money earned and spent-->
-                            <StackPanel Grid.Row="0" Grid.Column="2">
-                                <lvc:PieChart x:Name="PieChart" LegendLocation="Right">
-                                    <!--<lvc:PieChart.Series>
-                                        -->
-                                    <!-- Pie series are added in code-behind or via binding -->
-                                    <!--
-                                    </lvc:PieChart.Series>-->
-                                    <TextBlock FontSize="65" TextWrapping="Wrap" >Pie chart will go here</TextBlock>
-                                </lvc:PieChart>
-                            </StackPanel>
-                        </Grid>
-
+                        <StackPanel Grid.Row="0" Grid.Column="0" >
+                            <!--The first column will the be monthly net value-->
+                            <TextBlock Text="{Binding NetIncome, StringFormat='Net: ${0}'}" Margin="5" FontSize="40" />
+                            <TextBlock Grid.Row="0" Text="{Binding netRevenues, StringFormat='Earned: ${0}'}" Foreground="LimeGreen" 
+                                           FontSize="40" />
+                            <TextBlock Grid.Row="1" Text="{Binding netExpenses, StringFormat='Spent: ${0}'}" Foreground="OrangeRed" 
+                                           FontSize="40" />
+                        </StackPanel>
 
                     </Grid>
 
                     <!--Top row, second half-->
-                    <Grid Grid.Row="0" Grid.Column="1">
+                    <Grid Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
 
                         <Grid>
                             <Grid.RowDefinitions>
@@ -121,14 +93,10 @@
                             <TextBlock Grid.Row="0" Text="Last month, your monthly net income was: $200. You earned $3500 and spent $2500." 
                                      FontSize="20" />
 
-                            <StackPanel Grid.Row="1" >
-                                <lvc:PieChart x:Name="PreviousMonthPieChart" LegendLocation="Right">
-                                    <!--<lvc:PieChart.Series>-->
-                                    <!-- Pie series are added in code-behind or via binding -->
-                                    <!--</lvc:PieChart.Series>-->
-                                    <TextBlock FontSize="65" TextWrapping="Wrap" >Pie chart will go here</TextBlock>
-                                </lvc:PieChart>
-                            </StackPanel>
+                            <!--<StackPanel Grid.Row="1" >-->
+                            <lvc:PieChart Grid.Row="1" x:Name="PieChart2" LegendLocation="Right" Series="{Binding PieChartData}" 
+                                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                            <!--</StackPanel>-->
 
                         </Grid>
                         <!--End of first third on the bottom half-->
@@ -219,7 +187,7 @@
                     <!--Bottom row, first half-->
                     <StackPanel Grid.Row="1" Grid.Column="0">
                         <TextBlock Text="Source of income with detail" FontSize="25" />
-                        
+
                         <!--Listview of all income entries-->
                         <ListView Grid.Column="1" Name="AllIncomeList" Margin="15">
                             <ListView.View>

@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Finance.View_Models;
 using MahApps.Metro.Controls;
 
 namespace Finance
@@ -20,6 +21,8 @@ namespace Finance
         public MainWindow()
         {
             InitializeComponent();
+            SharedViewModel sharedViewModel = new SharedViewModel();
+            this.DataContext = sharedViewModel;
         }
     }
 }

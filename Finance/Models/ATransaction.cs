@@ -14,7 +14,7 @@ namespace Finance.Models
         public DateTime TimeStamp { get; set; }
         public bool IsReoccuring { get; set; }
         public string Title { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
         public Category Budget { get; set; }
     }
 }

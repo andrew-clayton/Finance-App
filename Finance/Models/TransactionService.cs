@@ -10,10 +10,8 @@ namespace Finance.Models
 {
     public class TransactionService
     {
-        //private readonly FinanceContext _context;
         public TransactionService()
         {
-            //_context = context;
         }
 
         // Read
@@ -61,6 +59,35 @@ namespace Finance.Models
 
                     // Asynchronously save the changes to the database
                     await context.SaveChangesAsync();
+                }
+            }
+        }
+
+        public async Task UpdateTransaction(ATransaction updatedTransaction)
+        {
+            using (var context = new FinanceContext())
+            {
+                // Find the existing transaction by id
+                ATransaction existingTransaction = await context.Transactions.FindAsync(updatedTransaction);
+                if (existingTransaction != null)
+                {
+                    existingTransaction.Value = updatedTransaction.Value;
+                    existingTransaction.TimeStamp = updatedTransaction.TimeStamp;
+                    existingTransaction.Budget = updatedTransaction.Budget;
+                    existingTransaction.IsReoccuring = updatedTransaction.IsReoccuring;
+                    existingTransaction.Title = updatedTransaction.Title;
+                    existingTransaction.Description = updatedTransaction.Description;
+
+                    // Mark the transaction as modified
+                    context.Entry(existingTransaction).State = EntityState.Modified;
+
+                    // Save the changes to the database
+                    await context.SaveChangesAsync();
+                }
+                else
+                {
+                    // handle the case where the transaction doesn't exist
+                    throw new KeyNotFoundException("Transaction not found for update");
                 }
             }
         }
