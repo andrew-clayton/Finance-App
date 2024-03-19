@@ -28,25 +28,15 @@
 
                     <!--End of grid definitions-->
 
-                    <!--Top row, first half-->
-                    <Grid Grid.Row="0" Grid.Column="0">
-                        <!--This section will be split into three columns-->
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Row="0" Grid.Column="0" >
-                            <!--The first column will the be monthly net value-->
-                            <TextBlock Text="{Binding NetIncome, StringFormat='Net: ${0}'}" Margin="5" FontSize="40" />
-                            <TextBlock Grid.Row="0" Text="{Binding netRevenues, StringFormat='Earned: ${0}'}" Foreground="LimeGreen" 
+                    <StackPanel Grid.Row="0" Grid.Column="0" >
+                        <!--The first column will the be monthly net value-->
+                        <TextBlock Text="{Binding NetIncome, StringFormat='Net: ${0}'}" Margin="5" FontSize="40" />
+                        <TextBlock Grid.Row="0" Text="{Binding netRevenues, StringFormat='Earned: ${0}'}" Foreground="LimeGreen" 
                                            FontSize="40" />
-                            <TextBlock Grid.Row="1" Text="{Binding netExpenses, StringFormat='Spent: ${0}'}" Foreground="OrangeRed" 
+                        <TextBlock Grid.Row="1" Text="{Binding netExpenses, StringFormat='Spent: ${0}'}" Foreground="OrangeRed" 
                                            FontSize="40" />
-                        </StackPanel>
+                    </StackPanel>
 
-                    </Grid>
 
                     <!--Top row, second half-->
                     <Grid Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
@@ -72,57 +62,30 @@
                     </Grid>
 
                     <!--Bottom half-->
-                    <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ShowGridLines="True">
-                        <!--Split into three columns-->
-                        <Grid.ColumnDefinitions>
-                            <!--First third-->
-                            <ColumnDefinition Width="*" />
-                            <!--Second third-->
-                            <ColumnDefinition Width="*" />
-                            <!--Third third-->
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
 
-                        <!--Bottom half, first third-->
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-
-                            <TextBlock Grid.Row="0" Text="Last month, your monthly net income was: $200. You earned $3500 and spent $2500." 
-                                     FontSize="20" />
-
-                            <!--<StackPanel Grid.Row="1" >-->
-                            <lvc:PieChart Grid.Row="1" x:Name="PieChart2" LegendLocation="Right" Series="{Binding PieChartData}" 
+                    <!--First third-->
+                    <lvc:PieChart Grid.Row="1" x:Name="PieChart2" LegendLocation="Right" Series="{Binding PieChartData}" 
                                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                            <!--</StackPanel>-->
 
-                        </Grid>
-                        <!--End of first third on the bottom half-->
+                    <!--Bottom half, second third-->
+                    <ListView Grid.Column="1" Grid.Row="1" Name="IncomeListView" Margin="15">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Income" Width="145" />
+                                <!--DisplayMemberBinding="{Binding Budget}"-->
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
 
-                        <!--Bottom half, second third-->
-                        <ListView Grid.Column="1" Name="IncomeListView" Margin="15">
-                            <ListView.View>
-                                <GridView>
-                                    <GridViewColumn Header="Income" Width="145" />
-                                    <!--DisplayMemberBinding="{Binding Budget}"-->
-                                </GridView>
-                            </ListView.View>
-                        </ListView>
-
-                        <!--Bottom half, 3rd third-->
-                        <ListView Grid.Column="2" Name="ExpenseListView" Margin="15">
-                            <ListView.View>
-                                <GridView>
-                                    <GridViewColumn Header="Expenses" Width="145" />
-                                    <!--DisplayMemberBinding="{Binding Budget}"-->
-                                </GridView>
-                            </ListView.View>
-                        </ListView>
-
-                    </Grid>
-
+                    <!--Bottom half, 3rd third-->
+                    <ListView Grid.Column="2" Grid.Row="1" Name="ExpenseListView" Margin="15">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Expenses" Width="145" />
+                                <!--DisplayMemberBinding="{Binding Budget}"-->
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
                 </Grid>
             </TabItem>
 
