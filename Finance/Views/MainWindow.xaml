@@ -28,14 +28,22 @@
 
                     <!--End of grid definitions-->
 
-                    <StackPanel Grid.Row="0" Grid.Column="0" >
+                    <Grid Grid.Row="0" Grid.Column="0" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        
                         <!--The first column will the be monthly net value-->
-                        <TextBlock Text="{Binding NetIncome, StringFormat='Net: ${0}'}" Margin="5" FontSize="40" />
-                        <TextBlock Grid.Row="0" Text="{Binding netRevenues, StringFormat='Earned: ${0}'}" Foreground="LimeGreen" 
-                                           FontSize="40" />
-                        <TextBlock Grid.Row="1" Text="{Binding netExpenses, StringFormat='Spent: ${0}'}" Foreground="OrangeRed" 
-                                           FontSize="40" />
-                    </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="0">
+                            <TextBlock Text="{Binding NetIncome, StringFormat='Net: ${0}   '}" FontSize="21" />
+                            <TextBlock Text="{Binding netRevenues, StringFormat='Earned: ${0}   '}" Foreground="LimeGreen" FontSize="21" />
+                            <TextBlock Text="{Binding netExpenses, StringFormat='Spent: ${0}'}" Foreground="OrangeRed" FontSize="21" />
+                        </StackPanel>
+
+                        <lvc:PieChart x:Name="PieChart" LegendLocation="Right" Series="{Binding PieChartData}" 
+                                               Grid.Row="1" Margin="10"/>
+                    </Grid>
 
 
                     <!--Top row, second half-->
@@ -64,8 +72,6 @@
                     <!--Bottom half-->
 
                     <!--First third-->
-                    <lvc:PieChart Grid.Row="1" x:Name="PieChart2" LegendLocation="Right" Series="{Binding PieChartData}" 
-                                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
                     <!--Bottom half, second third-->
                     <ListView Grid.Column="1" Grid.Row="1" Name="RevenuesListView" Margin="15" ItemsSource="{Binding Revenues}">
