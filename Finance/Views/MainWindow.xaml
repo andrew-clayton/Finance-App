@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:local="clr-namespace:Finance"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen" ResizeMode="CanResizeWithGrip"
@@ -16,42 +17,84 @@
                 <Grid ShowGridLines="True">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
-
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
                     <!--End of grid definitions-->
 
-                    <!--Top row, first half-->
-                    <Grid Grid.Row="0" Grid.Column="0">
+                    <Grid Grid.Row="0" Grid.Column="0" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        
+                        <!--The first column will the be monthly net value-->
+                        <StackPanel Orientation="Horizontal" Grid.Row="0">
+                            <TextBlock Text="{Binding NetIncome, StringFormat='Net: ${0}   '}" FontSize="21" />
+                            <TextBlock Text="{Binding netRevenues, StringFormat='Earned: ${0}   '}" Foreground="LimeGreen" FontSize="21" />
+                            <TextBlock Text="{Binding netExpenses, StringFormat='Spent: ${0}'}" Foreground="OrangeRed" FontSize="21" />
+                        </StackPanel>
 
+                        <lvc:PieChart x:Name="PieChart" LegendLocation="Right" Series="{Binding PieChartData}" 
+                                               Grid.Row="1" Margin="10"/>
                     </Grid>
 
-                    <!--Top row, second half-->
-                    <Grid Grid.Row="0" Grid.Column="1">
 
+                    <!--Top row, second half-->
+                    <Grid Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Text="This month, you spent x% of budgeted expenses." Margin="5" FontSize="28" />
+
+                            <ListView Grid.Row="1" Name="budgetsListView">
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="Budget category A" Width="145" />
+                                        <!--DisplayMemberBinding="{Binding Budget}"-->
+                                        <GridViewColumn Header="Budget category B" Width="145" />
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </Grid>
                     </Grid>
 
                     <!--Bottom half-->
-                    <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ShowGridLines="True">
-                        <!--Split into three columns-->
-                        <Grid.ColumnDefinitions>
-                            <!--First third-->
-                            <ColumnDefinition Width="*" />
 
-                            <!--Second third-->
-                            <ColumnDefinition Width="*" />
+                    <!--First third-->
 
-                            <!--Third third-->
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                    </Grid>
+                    <!--Bottom half, second third-->
+                    <ListView Grid.Column="1" Grid.Row="1" Name="RevenuesListView" Margin="15" ItemsSource="{Binding Revenues}">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Income" Width="145" DisplayMemberBinding="{Binding Value}"/>
+                                <GridViewColumn Header="Title" Width="145" DisplayMemberBinding="{Binding Title}"/>
+                                <GridViewColumn Header="Date" Width="145" DisplayMemberBinding="{Binding TimeStamp}"/>
 
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+
+                    <!--Bottom half, 3rd third-->
+                    <ListView Grid.Column="2" Grid.Row="1" Name="ExpensesListView" Margin="15" ItemsSource="{Binding Expenses}" >
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Expenses" Width="145" DisplayMemberBinding="{Binding Value}"/>
+                                <GridViewColumn Header="Title" Width="145" DisplayMemberBinding="{Binding Title}"/>
+                                <GridViewColumn Header="Date" Width="145" DisplayMemberBinding="{Binding TimeStamp}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
                 </Grid>
             </TabItem>
 
@@ -80,57 +123,76 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        
+
                         <!--content-->
+                        <!--Top row, first column-->
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Budget this month: $20" Margin="35" FontSize="30" />
+                            <Button Name="CreateNewBudget" Content="Create a new budget" Margin="30" />
+                        </StackPanel>
+
+                        <!--Top row, second column-->
+                        <!--This one will be a list view for all of the items entered into the budget so far.-->
+                        <ListView Grid.Column="1" Name="BudgetItemList" Margin="15">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Budget Items" Width="200" />
+                                    <!--DisplayMemberBinding="{Binding Budget}"-->
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+
+                        <!--Top row, third column-->
+                        <!--The third column here is just some buttons-->
+                        <StackPanel Grid.Column="2" >
+                            <Button Name="ImportDataButton" Content="Import Data" Margin="10" />
+                            <Button Name="ExportDataButton" Content="Export Data" Margin="10" />
+                            <Button Name="AddReoccuringIncome" Content="Add New Reoccuring Source of Income" Margin="10" />
+                            <Button Name="AddOneTimeIncome" Content="Add Single Income Entry" Margin="10" />
+                            <Button Name="AddReoccuringExpense" Content="Add Reoccuring Expense" Margin="10" />
+                            <Button Name="AddOneTimeExpense" Content="Add Single Expense Entry" Margin="10" />
+                        </StackPanel>
+
+
                     </Grid>
 
                     <!--Bottom row, first half-->
-                    <Grid Grid.Row="1" Grid.Column="0">
+                    <StackPanel Grid.Row="1" Grid.Column="0">
+                        <TextBlock Text="Source of income with detail" FontSize="25" />
 
-                    </Grid>
-                    
+                        <!--Listview of all income entries-->
+                        <ListView Grid.Column="1" Name="AllIncomeList" Margin="15">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Income" Width="200" />
+                                    <!--DisplayMemberBinding="{Binding Budget}"-->
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </StackPanel>
+
                     <!--Bottom row, second half-->
-                    <Grid Grid.Row="1" Grid.Column="1">
-                        <!--content-->
-                    </Grid>
+                    <StackPanel Grid.Row="1" Grid.Column="1">
+                        <TextBlock Text="Source of income with detail" FontSize="25" />
+
+                        <!--Listview of all income entries-->
+                        <ListView Grid.Column="1" Name="TotalExpensesList" Margin="15">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Expenses" Width="200" />
+                                    <!--DisplayMemberBinding="{Binding Budget}"-->
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </StackPanel>
 
                 </Grid>
             </TabItem>
 
             <!--..................................................................................................................................-->
-
-            <TabItem Header="History">
-            <!--This has two columns. The first column has two rows, the second has one row.-->
-                <Grid ShowGridLines="True">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    
-                    <!--First column-->
-                    <Grid Grid.Column="0" ShowGridLines="True">
-                        <!--This is split into two rows-->
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        
-                        <!--First row-->
-                        <Grid Grid.Row="0">
-                            
-                        </Grid>
-                        
-                        <!--Second row-->
-                        <Grid Grid.Row="1">
-                            
-                        </Grid>
-                    </Grid>
-                    <!--End of first column-->
-                    
-                    <!--Second column-->
-                    <Grid Grid.Column="1"></Grid>
-                </Grid>
-            </TabItem>
+            <!--This is going to remain unimplemented for now. This is not needed for the first two tabs to function, and I want to 
+            work with something more manageable for now.-->
+            <!--<TabItem Header="History"></TabItem>-->
         </TabControl>
     </Grid>
 </mah:MetroWindow>
