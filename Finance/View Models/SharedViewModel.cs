@@ -96,14 +96,6 @@ namespace Finance.View_Models
             {
                 Transactions.Add(transaction);
 
-                //if (transaction.Value >= 0)
-                //{
-                //    Revenues.Add(transaction);
-                //}
-                //else
-                //{
-                //    Expenses.Add(transaction);
-                //}
 
             }
             OnPropertyChanged(nameof(Transactions));
@@ -112,27 +104,15 @@ namespace Finance.View_Models
         private async void Refresh()
         {
             Transactions.Clear();
-            //Expenses.Clear();
-            //Revenues.Clear();
 
             var transactionList = await transactionService.GetAllTransactionsAsync();
             foreach (var transaction in transactionList)
             {
                 Transactions.Add(transaction);
 
-                //if (transaction.Value >= 0)
-                //{
-                //    Revenues.Add(transaction);
-                //}
-                //else
-                //{
-                //    Expenses.Add(transaction);
-                //}
 
             }
             OnPropertyChanged(nameof(Transactions));
-            //OnPropertyChanged(nameof(Expenses));
-            //OnPropertyChanged(nameof(Revenues));
         }
 
         private async Task AddTransaction(ATransaction newTransaction)
@@ -140,12 +120,8 @@ namespace Finance.View_Models
             await transactionService.AddTransaction(newTransaction);
             Transactions.Add(newTransaction);
 
-            //if (newTransaction.Value >= 0) Revenues.Add(newTransaction);
-            //else Expenses.Add(newTransaction);
-
             OnPropertyChanged(nameof(Transactions));
-            //OnPropertyChanged(nameof(Expenses));
-            //OnPropertyChanged(nameof(Revenues));
+
         }
 
         private void RemoveTransaction(ATransaction oldTransaction)
@@ -153,12 +129,7 @@ namespace Finance.View_Models
             transactionService.DeleteTransaction(oldTransaction.Id);
             Transactions.Remove(oldTransaction);
 
-            //if (oldTransaction.Value >= 0) Revenues.Add(oldTransaction);
-            //else Expenses.Add(oldTransaction);
-
             OnPropertyChanged(nameof(Transactions));
-            //OnPropertyChanged(nameof(Expenses));
-            //OnPropertyChanged(nameof(Revenues));
         }
 
 

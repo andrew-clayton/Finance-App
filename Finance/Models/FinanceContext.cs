@@ -16,10 +16,11 @@ namespace Finance.Models
 
         public FinanceContext()
         {
-            //var folder = AppDomain.CurrentDomain.BaseDirectory;
-            var folder = "C:\\Users\\andre\\source\\repos\\Finance";
+            var fullPath = Environment.CurrentDirectory;
+            var intermediatePath = Directory.GetParent(Directory.GetParent(Directory.GetParent(fullPath).ToString()).ToString()).ToString();
+            var currentPath = Directory.GetParent(intermediatePath).ToString();
 
-            DbPath = Path.Combine(folder, "finance.db");
+            DbPath = Path.Combine(currentPath, "finance.db");
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
