@@ -17,8 +17,22 @@ namespace Finance.View_Models
     {
         private TransactionService transactionService = new TransactionService();
         public ObservableCollection<ATransaction> Transactions = new ObservableCollection<ATransaction>();
-        public IEnumerable<ATransaction> Expenses => Transactions.Where(t => t.Value < 0);
-        public IEnumerable<ATransaction> Revenues => Transactions.Where(t => t.Value >= 0);
+        public IEnumerable<ATransaction> CurrentTransactions => Transactions.Where(t => t.TimeStamp.Month == selectedDate.Month &&
+        selectedDate.Year == t.TimeStamp.Year);
+        public IEnumerable<ATransaction> Expenses => CurrentTransactions.Where(t => t.Value < 0);
+        public IEnumerable<ATransaction> Revenues => CurrentTransactions.Where(t => t.Value >= 0);
+        private DateTime _selectedDate = DateTime.Now;
+        public DateTime selectedDate
+        {
+            get => _selectedDate;
+            set
+            {
+                _selectedDate = value;
+                OnPropertyChanged(nameof(selectedDate));
+                UpdateTransactionsForSelectedDate();
+            }
+        }
+
         public float netRevenues
         {
             get
@@ -95,8 +109,6 @@ namespace Finance.View_Models
             foreach (var transaction in transactionList)
             {
                 Transactions.Add(transaction);
-
-
             }
             OnPropertyChanged(nameof(Transactions));
         }
@@ -109,8 +121,6 @@ namespace Finance.View_Models
             foreach (var transaction in transactionList)
             {
                 Transactions.Add(transaction);
-
-
             }
             OnPropertyChanged(nameof(Transactions));
         }
@@ -142,7 +152,7 @@ namespace Finance.View_Models
         private int[] FindNetTransactionsForMonth(DateTime date)
         {
             // Filter transactions for the given month and year.
-            var monthTransactions = Transactions.Where(t => t.TimeStamp.Month == date.Month && t.TimeStamp.Year == date.Year);
+            var monthTransactions = CurrentTransactions.Where(t => t.TimeStamp.Month == date.Month && t.TimeStamp.Year == date.Year);
 
             // Calculate the sum of revenues (transactions greater than 0).
             int totalRevenues = (int)monthTransactions.Where(t => t.Value > 0).Sum(t => t.Value);
@@ -153,5 +163,22 @@ namespace Finance.View_Models
             // Return an array with total revenues and total expenses.
             return new int[] { totalRevenues, totalExpenses };
         }
+
+        private void UpdateTransactionsForSelectedDate()
+        {
+            OnPropertyChanged(nameof(CurrentTransactions));
+            OnPropertyChanged(nameof(Expenses));
+            OnPropertyChanged(nameof(Revenues));
+            UpdatePieChartData();
+        }
+
+        private void UpdatePieChartData()
+        {
+            PieChartData[0].Values = new ChartValues<float> { netRevenues };
+            PieChartData[1].Values = new ChartValues<float> { Math.Abs(netExpenses) };
+            OnPropertyChanged(nameof(PieChartData));
+        }
+
+
     }
 }

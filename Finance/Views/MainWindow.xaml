@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:Finance"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen" ResizeMode="CanResizeWithGrip"
@@ -72,6 +73,11 @@
                     <!--Bottom half-->
 
                     <!--First third-->
+                    <!--This will be where the user selects the current month, I think... for now at least-->
+                    <StackPanel Grid.Row="1" Grid.Column="0">
+                        <TextBlock Text="Choose what month you want to examine finances for. By default, this will be the current month." />
+                        <DatePicker Name="DatePicker" SelectedDate="{Binding selectedDate, Mode=TwoWay}"/>
+                    </StackPanel>
 
                     <!--Bottom half, second third-->
                     <ListView Grid.Column="1" Grid.Row="1" Name="RevenuesListView" Margin="15" ItemsSource="{Binding Revenues}">

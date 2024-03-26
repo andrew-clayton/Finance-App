@@ -53,7 +53,7 @@ namespace Finance.Migrations
 
                     b.HasIndex("BudgetId");
 
-                    b.ToTable("Transactions");
+                    b.ToTable("CurrentTransactions");
                 });
 
             modelBuilder.Entity("Finance.Models.Budget", b =>
@@ -76,13 +76,13 @@ namespace Finance.Migrations
             modelBuilder.Entity("Finance.Models.ATransaction", b =>
                 {
                     b.HasOne("Finance.Models.Budget", null)
-                        .WithMany("Transactions")
+                        .WithMany("CurrentTransactions")
                         .HasForeignKey("BudgetId");
                 });
 
             modelBuilder.Entity("Finance.Models.Budget", b =>
                 {
-                    b.Navigation("Transactions");
+                    b.Navigation("CurrentTransactions");
                 });
 #pragma warning restore 612, 618
         }
