@@ -13,7 +13,7 @@
                 <!-- Theme setting -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            
+
             <!--Custom styling-->
             <Style TargetType="TextBlock">
                 <Setter Property="FontSize" Value="15" />

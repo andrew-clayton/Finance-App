@@ -17,8 +17,8 @@ namespace Finance.View_Models
     {
         private TransactionService transactionService = new TransactionService();
         public ObservableCollection<ATransaction> Transactions = new ObservableCollection<ATransaction>();
-        public IEnumerable<ATransaction> CurrentTransactions => Transactions.Where(t => t.TimeStamp.Month == selectedDate.Month &&
-        selectedDate.Year == t.TimeStamp.Year);
+        public IEnumerable<ATransaction> CurrentTransactions => Transactions.Where(t => ViewAllMonths || (t.TimeStamp.Month == selectedDate.Month &&
+        selectedDate.Year == t.TimeStamp.Year));
         public IEnumerable<ATransaction> Expenses => CurrentTransactions.Where(t => t.Value < 0);
         public IEnumerable<ATransaction> Revenues => CurrentTransactions.Where(t => t.Value >= 0);
         private DateTime _selectedDate = DateTime.Now;
@@ -29,7 +29,7 @@ namespace Finance.View_Models
             {
                 _selectedDate = value;
                 OnPropertyChanged(nameof(selectedDate));
-                UpdateTransactionsForSelectedDate();
+                RefreshCurrentTransactions();
             }
         }
 
@@ -57,7 +57,7 @@ namespace Finance.View_Models
                 return total;
             }
         }
-        public float NetIncome
+        public float netIncome
         {
             get
             {
@@ -66,6 +66,33 @@ namespace Finance.View_Models
         }
 
         public SeriesCollection PieChartData { get; set; }
+        private bool _viewAllMonths;
+        public bool ViewAllMonths
+        {
+            get => _viewAllMonths;
+            set
+            {
+                if (_viewAllMonths != value)
+                {
+                    _viewAllMonths = value;
+                    OnPropertyChanged(nameof(ViewAllMonths));
+                    // Trigger update of transactions when checkbox changes
+                    RefreshCurrentTransactions();
+                }
+            }
+        }
+
+        // Used to refresh UI elements. This was needed since the checkbox to view all transactions was not functioning as intended
+        private void RefreshCurrentTransactions()
+        {
+            OnPropertyChanged(nameof(CurrentTransactions));
+            OnPropertyChanged(nameof(Expenses));
+            OnPropertyChanged(nameof(Revenues));
+            OnPropertyChanged(nameof(netRevenues));
+            OnPropertyChanged(nameof(netExpenses));
+            OnPropertyChanged(nameof(netIncome));
+            UpdatePieChartData();
+        }
 
 
 
@@ -123,6 +150,7 @@ namespace Finance.View_Models
                 Transactions.Add(transaction);
             }
             OnPropertyChanged(nameof(Transactions));
+            RefreshCurrentTransactions();
         }
 
         private async Task AddTransaction(ATransaction newTransaction)
@@ -131,6 +159,7 @@ namespace Finance.View_Models
             Transactions.Add(newTransaction);
 
             OnPropertyChanged(nameof(Transactions));
+            RefreshCurrentTransactions();
 
         }
 
@@ -140,6 +169,7 @@ namespace Finance.View_Models
             Transactions.Remove(oldTransaction);
 
             OnPropertyChanged(nameof(Transactions));
+            RefreshCurrentTransactions();
         }
 
 
@@ -147,29 +177,7 @@ namespace Finance.View_Models
         {
             transactionService.UpdateTransaction(transaction);
             Refresh();
-        }
-
-        private int[] FindNetTransactionsForMonth(DateTime date)
-        {
-            // Filter transactions for the given month and year.
-            var monthTransactions = CurrentTransactions.Where(t => t.TimeStamp.Month == date.Month && t.TimeStamp.Year == date.Year);
-
-            // Calculate the sum of revenues (transactions greater than 0).
-            int totalRevenues = (int)monthTransactions.Where(t => t.Value > 0).Sum(t => t.Value);
-
-            // Calculate the sum of expenses (transactions less than 0).
-            int totalExpenses = (int)monthTransactions.Where(t => t.Value < 0).Sum(t => t.Value);
-
-            // Return an array with total revenues and total expenses.
-            return new int[] { totalRevenues, totalExpenses };
-        }
-
-        private void UpdateTransactionsForSelectedDate()
-        {
-            OnPropertyChanged(nameof(CurrentTransactions));
-            OnPropertyChanged(nameof(Expenses));
-            OnPropertyChanged(nameof(Revenues));
-            UpdatePieChartData();
+            RefreshCurrentTransactions();
         }
 
         private void UpdatePieChartData()

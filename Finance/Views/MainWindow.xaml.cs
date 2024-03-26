@@ -21,8 +21,7 @@ namespace Finance
         public MainWindow()
         {
             InitializeComponent();
-            SharedViewModel sharedViewModel = new SharedViewModel();
-            this.DataContext = sharedViewModel;
+            this.DataContext = new SharedViewModel();
         }
     }
 }

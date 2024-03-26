@@ -7,9 +7,14 @@
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:Finance"
+        xmlns:local_model="clr-namespace:Finance.Models"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen" ResizeMode="CanResizeWithGrip"
         Title="Financial Management" Height="750" Width="1250">
+    <Window.Resources>
+        <local_model:AbsoluteValueConverter x:Key="AbsoluteValueConverter" />
+    </Window.Resources>
+    
     <Grid>
         <TabControl Name="tcList">
             <TabItem Header="Overview">
@@ -37,9 +42,9 @@
 
                         <!--The first column will the be monthly net value-->
                         <StackPanel Orientation="Horizontal" Grid.Row="0">
-                            <TextBlock Text="{Binding NetIncome, StringFormat='Net: ${0}   '}" FontSize="21" />
+                            <TextBlock Text="{Binding netIncome, StringFormat='Net: ${0}   '}" FontSize="21" />
                             <TextBlock Text="{Binding netRevenues, StringFormat='Earned: ${0}   '}" Foreground="LimeGreen" FontSize="21" />
-                            <TextBlock Text="{Binding netExpenses, StringFormat='Spent: ${0}'}" Foreground="OrangeRed" FontSize="21" />
+                            <TextBlock Text="{Binding netExpenses, Converter={StaticResource AbsoluteValueConverter}, StringFormat='Spent: ${0}'}" Foreground="OrangeRed" FontSize="21" />
                         </StackPanel>
 
                         <lvc:PieChart x:Name="PieChart" LegendLocation="Right" Series="{Binding PieChartData}" 
@@ -75,8 +80,11 @@
                     <!--First third-->
                     <!--This will be where the user selects the current month, I think... for now at least-->
                     <StackPanel Grid.Row="1" Grid.Column="0">
-                        <TextBlock Text="Choose what month you want to examine finances for. By default, this will be the current month." />
-                        <DatePicker Name="DatePicker" SelectedDate="{Binding selectedDate, Mode=TwoWay}"/>
+                        <TextBlock Text="Choose what month's finaces you'd like to view" Margin="5,20,0,0"/>
+                        <DatePicker Name="DatePicker" SelectedDate="{Binding selectedDate, Mode=TwoWay}" Margin="5,0,0,25"/>
+
+                        <TextBlock Text="Or select here if you'd like to view all your transactions" Margin="5,5,50,3"/>
+                        <CheckBox x:Name="viewAllMonths" Content="View All Months" Margin="5,0,0,0" IsChecked="{Binding ViewAllMonths, Mode=TwoWay}" />
                     </StackPanel>
 
                     <!--Bottom half, second third-->
@@ -95,7 +103,7 @@
                     <ListView Grid.Column="2" Grid.Row="1" Name="ExpensesListView" Margin="15" ItemsSource="{Binding Expenses}" >
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="Expenses" Width="100" DisplayMemberBinding="{Binding Value}"/>
+                                <GridViewColumn Header="Expenses" Width="100" DisplayMemberBinding="{Binding Value, Converter={StaticResource AbsoluteValueConverter}}"/>
                                 <GridViewColumn Header="Title" Width="125" DisplayMemberBinding="{Binding Title}"/>
                                 <GridViewColumn Header="Date" Width="145" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
                             </GridView>
