@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LiveCharts;
 using LiveCharts.Wpf;
+using SQLitePCL;
 
 
 namespace Finance.View_Models
@@ -19,8 +20,24 @@ namespace Finance.View_Models
         public ObservableCollection<ATransaction> Transactions = new ObservableCollection<ATransaction>();
         public IEnumerable<ATransaction> CurrentTransactions => Transactions.Where(t => ViewAllMonths || (t.TimeStamp.Month == selectedDate.Month &&
         selectedDate.Year == t.TimeStamp.Year));
+        public IEnumerable<ATransaction> CurrentBudgetTransactions => CurrentTransactions.Where(t => t.Budget == SelectedBudget.Type);
+
+        public ObservableCollection<Budget> _budgets = new ObservableCollection<Budget>();
+        public ObservableCollection<Budget> Budgets
+        {
+            get => _budgets;
+            set
+            {
+                _budgets = value;
+                OnPropertyChanged(nameof(Budgets));
+            }
+        }
+
+        #region properties
+
         public IEnumerable<ATransaction> Expenses => CurrentTransactions.Where(t => t.Value < 0);
         public IEnumerable<ATransaction> Revenues => CurrentTransactions.Where(t => t.Value >= 0);
+
         private DateTime _selectedDate = DateTime.Now;
         public DateTime selectedDate
         {
@@ -82,6 +99,44 @@ namespace Finance.View_Models
             }
         }
 
+        private Budget _selectedBudget;
+        public Budget SelectedBudget
+        {
+            get => _selectedBudget;
+            set
+            {
+                if (value != _selectedBudget)
+                {
+                    _selectedBudget = value;
+                    OnPropertyChanged(nameof(SelectedBudget));
+                    OnPropertyChanged(nameof(CurrentBudgetTransactions));
+                    OnPropertyChanged(nameof(AmountOfBudgetSpent));
+                    OnPropertyChanged(nameof(PercentageOfBudgetSpent));
+                }
+            }
+        }
+
+        public double PercentageOfBudgetSpent
+        {
+            get
+            {
+                double totalBudgetSpent = CurrentBudgetTransactions.Sum(t => t.Value);
+                return (totalBudgetSpent / SelectedBudget.AllotedAmount) * 100;
+            }
+        }
+
+        public double AmountOfBudgetSpent
+        {
+            get
+            {
+                return CurrentBudgetTransactions.Sum(t => t.Value);
+            }
+        }
+
+
+
+        #endregion
+
         // Used to refresh UI elements. This was needed since the checkbox to view all transactions was not functioning as intended
         private void RefreshCurrentTransactions()
         {
@@ -91,6 +146,9 @@ namespace Finance.View_Models
             OnPropertyChanged(nameof(netRevenues));
             OnPropertyChanged(nameof(netExpenses));
             OnPropertyChanged(nameof(netIncome));
+            OnPropertyChanged(nameof(CurrentBudgetTransactions));
+            OnPropertyChanged(nameof(PercentageOfBudgetSpent));
+            OnPropertyChanged(nameof(AmountOfBudgetSpent));
             UpdatePieChartData();
         }
 
@@ -104,8 +162,11 @@ namespace Finance.View_Models
 
         public SharedViewModel()
         {
-            LoadTransactionsFromDatabase();
+            LoadBudgetsFromDatabase();
+            LoadTransactionsFromDatabase();            
             InitializePieChartData();
+
+            SelectedBudget = Budgets[0];
         }
 
         private void InitializePieChartData()
@@ -140,7 +201,18 @@ namespace Finance.View_Models
             OnPropertyChanged(nameof(Transactions));
         }
 
-        private async void Refresh()
+        private async void LoadBudgetsFromDatabase()
+        {
+            var budgetService = new BudgetService();
+            var budgetList = await budgetService.GetAllBudgetsAsync();
+            foreach (var budget in budgetList)
+            {
+                Budgets.Add(budget);
+            }
+            OnPropertyChanged(nameof(Budgets));
+        }
+
+        private async void RefreshTransactions()
         {
             Transactions.Clear();
 
@@ -176,7 +248,7 @@ namespace Finance.View_Models
         private void UpdateTransaction(ATransaction transaction)
         {
             transactionService.UpdateTransaction(transaction);
-            Refresh();
+            RefreshTransactions();
             RefreshCurrentTransactions();
         }
 

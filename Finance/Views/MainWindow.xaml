@@ -14,13 +14,13 @@
     <Window.Resources>
         <local_model:AbsoluteValueConverter x:Key="AbsoluteValueConverter" />
     </Window.Resources>
-    
+
     <Grid>
         <TabControl Name="tcList">
             <TabItem Header="Overview">
                 <!--This will be a grid split into 6 - 2 rows, 3 columns-->
                 <!--This is defined as a 2x2 on a higher level, but the bottom rom will span both columns and have a subgrid split into 3 columns-->
-                <Grid ShowGridLines="True">
+                <Grid ShowGridLines="False">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="*"/>
@@ -61,14 +61,24 @@
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0" Text="This month, you spent x% of budgeted expenses." Margin="5" FontSize="28" />
+                            <StackPanel Grid.Row="0">
+                                <ComboBox ItemsSource="{Binding Budgets}" SelectedItem="{Binding SelectedBudget, Mode=TwoWay}" 
+                                          DisplayMemberPath="Type" />
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding SelectedBudget.AllotedAmount, StringFormat='Budget limit: ${0}     '}" />
+                                    <TextBlock Text="{Binding AmountOfBudgetSpent, Converter={StaticResource AbsoluteValueConverter}, StringFormat='Budget spent: ${0}     '}" />
+                                    <TextBlock Text="{Binding PercentageOfBudgetSpent, StringFormat='Percentage of budget spent: %{0}     '}" />
+                                </StackPanel>
 
-                            <ListView Grid.Row="1" Name="budgetsListView">
+
+                            </StackPanel>
+
+                            <ListView Grid.Row="1" Name="budgetsListView" ItemsSource="{Binding CurrentBudgetTransactions}">
                                 <ListView.View>
                                     <GridView>
-                                        <GridViewColumn Header="Budget category A" Width="145" />
-                                        <!--DisplayMemberBinding="{Binding Budget}"-->
-                                        <GridViewColumn Header="Budget category B" Width="145" />
+                                        <GridViewColumn Header="Income" Width="100" DisplayMemberBinding="{Binding Value}"/>
+                                        <GridViewColumn Header="Title" Width="125" DisplayMemberBinding="{Binding Title}"/>
+                                        <GridViewColumn Header="Date" Width="145" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
@@ -115,7 +125,7 @@
             <!--..................................................................................................................................-->
 
             <TabItem Header="Edit">
-                <Grid ShowGridLines="True">
+                <Grid ShowGridLines="False">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="*"/>
@@ -129,7 +139,7 @@
                     <!--End of grid definitions-->
 
                     <!--Top row has a subgrid with 3 columns-->
-                    <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" ShowGridLines="True">
+                    <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" ShowGridLines="False">
                         <!--3 columns-->
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />

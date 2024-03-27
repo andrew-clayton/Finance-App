@@ -11,12 +11,20 @@ namespace Finance.Models
 {
     public class Budget
     {
-        public int BudgetId { get; set; }
-        public Category BudgetCategory{ get; set; }
-        public float BudgetAmount { get; set; }
-        public List<ATransaction> Transactions { get; set; } = new List<ATransaction>();
+        public Budget()
+        {
+            AllotedAmount = 0;
+            Type = Category.None;
+        }
+        public Budget(Category category)
+        {
+            AllotedAmount = 0;
+            Type = Category.None;
+            Type = category;
+        }
+        public int Id { get; set; }
+        public Category Type{ get; set; }
+        public float AllotedAmount { get; set; }
 
-        [NotMapped]
-        public float SpentAmount => Transactions.Sum(t => t.Value);
     }
 }
