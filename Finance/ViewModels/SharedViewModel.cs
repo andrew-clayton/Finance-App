@@ -12,7 +12,7 @@ using LiveCharts.Wpf;
 using SQLitePCL;
 
 
-namespace Finance.View_Models
+namespace Finance.ViewModels
 {
     public class SharedViewModel : INotifyPropertyChanged
     {

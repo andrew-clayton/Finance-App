@@ -1,0 +1,36 @@
+<Window x:Class="Finance.Views.AddTransactionDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Finance.ViewModels"
+        mc:Ignorable="d"
+        Title="Add Transaction" Height="450" Width="400">
+
+    <Window.DataContext>
+        <local:AddTransactionViewModel/>
+    </Window.DataContext>
+
+    <StackPanel Margin="10">
+        <TextBlock Text="Label:" />
+        <TextBox Text="{Binding LabelSelection, UpdateSourceTrigger=PropertyChanged}" />
+        
+        <TextBlock Text="Value:" />
+        <TextBox Text="{Binding ValueSelection, UpdateSourceTrigger=PropertyChanged}" />
+
+        <TextBlock Text="Timestamp:" />
+        <DatePicker SelectedDate="{Binding TimeStampSelection}"/>
+
+        <TextBlock Text="Budget:" />
+        <ComboBox SelectedItem="{Binding BudgetSelection, Mode=TwoWay}" ItemsSource="BudgetOptions" >
+            <!-- Populate ComboBox items -->
+        </ComboBox>
+
+        <!--<CheckBox IsChecked="{Binding IsReoccuring}" Content="Is Reoccuring?" />-->
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+            <Button Command="{Binding SaveCommand}" Content="Save" Margin="5" />
+            <Button Command="{Binding CancelCommand}" Content="Cancel" Margin="5" />
+        </StackPanel>
+    </StackPanel>
+</Window>
