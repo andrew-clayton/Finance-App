@@ -38,6 +38,7 @@ namespace Finance.ViewModels
         #region properties
         public ICommand OpenAddRevenueCommand { get; private set; }
         public ICommand OpenAddExpenseCommand { get; private set; }
+        public ICommand DeleteTransactionCommand { get; private set; }
 
         public IEnumerable<ATransaction> Expenses => CurrentTransactions.Where(t => t.Value < 0);
         public IEnumerable<ATransaction> Revenues => CurrentTransactions.Where(t => t.Value >= 0);
@@ -171,9 +172,23 @@ namespace Finance.ViewModels
             InitializePieChartData();
             OpenAddExpenseCommand = new RelayCommand(o => OpenAddTransactionView(true));
             OpenAddRevenueCommand = new RelayCommand(o => OpenAddTransactionView(false));
+            DeleteTransactionCommand = new RelayCommand(DeleteSelectedTransaction, CanDeleteTransaction);
 
             if (Budgets.Any())
                 SelectedBudget = Budgets[0];
+        }
+
+        private void DeleteSelectedTransaction(object parameter)
+        {
+            if (parameter is ATransaction transaction)
+            {
+                RemoveTransaction(transaction);
+            }
+        }
+        
+        private bool CanDeleteTransaction(object parameter)
+        {
+            return parameter != null; // Ensure that a transaction is selected
         }
 
         private void OpenAddTransactionView(object isExpense)
