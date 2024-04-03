@@ -7,10 +7,6 @@
         mc:Ignorable="d"
         Title="Add Transaction" Height="450" Width="400">
 
-    <Window.DataContext>
-        <local:AddTransactionViewModel/>
-    </Window.DataContext>
-
     <StackPanel Margin="10">
         <TextBlock Text="Label:" />
         <TextBox Text="{Binding SelectedLabel, UpdateSourceTrigger=PropertyChanged}" />
@@ -22,16 +18,14 @@
         <DatePicker SelectedDate="{Binding SelectedTimeStamp}"/>
 
         <TextBlock Text="Budget:" />
-        <ComboBox SelectedItem="{Binding SelectedBudget, Mode=TwoWay}" ItemsSource="BudgetOptions" >
+        <ComboBox SelectedItem="{Binding SelectedBudget, Mode=TwoWay}" ItemsSource="{Binding BudgetOptions}" >
             <!-- Populate ComboBox items -->
         </ComboBox>
-
-        <!--<CheckBox IsChecked="{Binding IsReoccuring}" Content="Is Reoccuring?" />-->
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
             <Button Command="{Binding SaveCommand}" Content="Save" Margin="5" />
             <Button Command="{Binding CancelCommand}" 
-					CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+					CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
 					Content="Cancel" Margin="5" />
         </StackPanel>
     </StackPanel>

@@ -169,8 +169,8 @@ namespace Finance.ViewModels
             LoadBudgetsFromDatabase();
             LoadTransactionsFromDatabase();
             InitializePieChartData();
-            OpenAddExpenseCommand = new RelayCommand(o => OpenAddTransactionDialog(true)); //todo: implement
-            OpenAddRevenueCommand = new RelayCommand(o => OpenAddTransactionDialog(false)); //todo: implement
+            OpenAddExpenseCommand = new RelayCommand(o => OpenAddTransactionDialog(true));
+            OpenAddRevenueCommand = new RelayCommand(o => OpenAddTransactionDialog(false));
 
             if (Budgets.Any())
                 SelectedBudget = Budgets[0];
@@ -178,7 +178,7 @@ namespace Finance.ViewModels
 
         private void OpenAddTransactionDialog(object isExpense)
         {
-            var dialog = new AddTransactionDialog(); // the view I defined in xaml... ??
+            var dialog = new AddTransactionDialog();
             bool isExpenseTransaction = (bool)isExpense;
             var viewModel = new AddTransactionViewModel(isExpenseTransaction);
 
