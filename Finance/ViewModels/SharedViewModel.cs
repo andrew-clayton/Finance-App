@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using LiveCharts;
 using LiveCharts.Wpf;
 using SQLitePCL;
+using Finance.Views;
+using System.Windows.Input;
 
 
 namespace Finance.ViewModels
@@ -34,6 +36,8 @@ namespace Finance.ViewModels
         }
 
         #region properties
+        public ICommand OpenAddRevenueCommand { get; private set; }
+        public ICommand OpenAddExpenseCommand { get; private set; }
 
         public IEnumerable<ATransaction> Expenses => CurrentTransactions.Where(t => t.Value < 0);
         public IEnumerable<ATransaction> Revenues => CurrentTransactions.Where(t => t.Value >= 0);
@@ -163,10 +167,24 @@ namespace Finance.ViewModels
         public SharedViewModel()
         {
             LoadBudgetsFromDatabase();
-            LoadTransactionsFromDatabase();            
+            LoadTransactionsFromDatabase();
             InitializePieChartData();
+            OpenAddExpenseCommand = new RelayCommand(o => OpenAddTransactionDialog(true)); //todo: implement
+            OpenAddRevenueCommand = new RelayCommand(o => OpenAddTransactionDialog(false)); //todo: implement
 
-            SelectedBudget = Budgets[0];
+            if (Budgets.Any())
+                SelectedBudget = Budgets[0];
+        }
+
+        private void OpenAddTransactionDialog(object isExpense)
+        {
+            var dialog = new AddTransactionDialog(); // the view I defined in xaml... ??
+            bool isExpenseTransaction = (bool)isExpense;
+            var viewModel = new AddTransactionViewModel(isExpenseTransaction);
+
+
+            dialog.DataContext = viewModel;
+            dialog.ShowDialog();
         }
 
         private void InitializePieChartData()

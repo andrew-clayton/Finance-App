@@ -13,16 +13,16 @@
 
     <StackPanel Margin="10">
         <TextBlock Text="Label:" />
-        <TextBox Text="{Binding LabelSelection, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox Text="{Binding SelectedLabel, UpdateSourceTrigger=PropertyChanged}" />
         
         <TextBlock Text="Value:" />
-        <TextBox Text="{Binding ValueSelection, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox Text="{Binding SelectedValue, UpdateSourceTrigger=PropertyChanged}" />
 
         <TextBlock Text="Timestamp:" />
-        <DatePicker SelectedDate="{Binding TimeStampSelection}"/>
+        <DatePicker SelectedDate="{Binding SelectedTimeStamp}"/>
 
         <TextBlock Text="Budget:" />
-        <ComboBox SelectedItem="{Binding BudgetSelection, Mode=TwoWay}" ItemsSource="BudgetOptions" >
+        <ComboBox SelectedItem="{Binding SelectedBudget, Mode=TwoWay}" ItemsSource="BudgetOptions" >
             <!-- Populate ComboBox items -->
         </ComboBox>
 
@@ -30,7 +30,9 @@
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
             <Button Command="{Binding SaveCommand}" Content="Save" Margin="5" />
-            <Button Command="{Binding CancelCommand}" Content="Cancel" Margin="5" />
+            <Button Command="{Binding CancelCommand}" 
+					CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+					Content="Cancel" Margin="5" />
         </StackPanel>
     </StackPanel>
 </Window>

@@ -99,6 +99,13 @@
 
                     <!--Bottom half, second third-->
                     <ListView Grid.Column="1" Grid.Row="1" Name="RevenuesListView" Margin="15" ItemsSource="{Binding Revenues}">
+                        <ListView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Add Revenue" Command="{Binding OpenAddRevenueCommand}" />
+                                <!--<MenuItem Header="Edit Transaction" Command="{Binding ~~~~}" />-->
+                                <!--<MenuItem Header="Delete Transaction" Command="{Binding ~~~~}" / >-->  
+                            </ContextMenu>
+                        </ListView.ContextMenu>
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Income" Width="100" DisplayMemberBinding="{Binding Value}"/>
@@ -111,6 +118,13 @@
 
                     <!--Bottom half, 3rd third-->
                     <ListView Grid.Column="2" Grid.Row="1" Name="ExpensesListView" Margin="15" ItemsSource="{Binding Expenses}" >
+                        <ListView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Add Expense" Command="{Binding OpenAddExpenseCommand}" />
+                                <!--<MenuItem Header="Edit Transaction" Command="{Binding ~~~~}"  />-->
+                                <!--<MenuItem Header="Delete Transaction" Command="{Binding ~~~~}" />--> 
+                            </ContextMenu>
+                        </ListView.ContextMenu>
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Expenses" Width="100" DisplayMemberBinding="{Binding Value, Converter={StaticResource AbsoluteValueConverter}}"/>

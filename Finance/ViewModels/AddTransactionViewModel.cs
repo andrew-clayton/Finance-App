@@ -15,33 +15,83 @@ namespace Finance.ViewModels
 {
     public class AddTransactionViewModel : INotifyPropertyChanged
     {
-        AddTransactionViewModel()
+        //AddTransactionViewModel()
+        //{
+        //    SaveCommand = new RelayCommand(SaveTransaction, CanSaveTransaction);
+        //    CancelCommand = new RelayCommand(CancelTransaction);
+
+        //    var budgetOptions = Enum.GetValues(typeof(Category));
+        //    SelectedBudget = BudgetOptions[0];
+        //}
+
+        public AddTransactionViewModel(bool isExpense)
         {
-            SaveCommand = new RelayCommand(SaveTransaction);
+            this.isExpense = isExpense;
+            SaveCommand = new RelayCommand(SaveTransaction, CanSaveTransaction);
             CancelCommand = new RelayCommand(CancelTransaction);
-            
+
             var budgetOptions = Enum.GetValues(typeof(Category));
+            foreach (var option in budgetOptions)
+            {
+                if (option is Category categoryOption)
+                    BudgetOptions.Add(categoryOption);
+                else throw new NotImplementedException();
+            }
             SelectedBudget = BudgetOptions[0];
         }
 
-        // Commands
+        #region Commands
         public ICommand SaveCommand { get; private set; }
         public ICommand CancelCommand { get; private set; }
+
+        // This method checks if all parameters are valid, so I can check this in each property's setter
+        private bool CanSaveTransaction(object obj)
+        {
+            if (String.IsNullOrEmpty(SelectedLabel) || String.IsNullOrEmpty(SelectedValue.ToString()))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        // Save the new transaction to the database
+        private void SaveTransaction(object obj)
+        {
+            ATransaction newTransaction = new ATransaction();
+            if (!isExpense) newTransaction.Value = SelectedValue;
+            else newTransaction.Value = SelectedValue * -1;
+            newTransaction.TimeStamp = SelectedTimeStamp;
+            newTransaction.Title = SelectedLabel;
+            newTransaction.Budget = SelectedBudget;
+
+            var transactionService = new TransactionService();
+            transactionService.AddTransaction(newTransaction);
+        }
+
+        // exit the dialog somehow
+        private void CancelTransaction(object obj)
+        {
+            var window = obj as Window;
+            window?.Close();
+        }
+        #endregion
 
         #region properties
 
         private string _labelSelection;
-        public string LabelSelection
+        public string SelectedLabel
         {
             get => _labelSelection;
             set
             {
                 _labelSelection = value;
+                OnPropertyChanged(nameof(SelectedLabel));
+                CommandManager.InvalidateRequerySuggested();
             }
 
         }
         private float _valueSelection;
-        public float ValueSelection
+        public float SelectedValue
         {
             get => _valueSelection;
             set
@@ -49,44 +99,41 @@ namespace Finance.ViewModels
                 if (float.TryParse(value.ToString(), out float parsedNum))
                 {
                     // it is a number
-                    _valueSelection = parsedNum;                    
+                    _valueSelection = parsedNum;
+                    OnPropertyChanged(nameof(SelectedValue));
+                    CommandManager.InvalidateRequerySuggested(); // notify re-evaluation of CanExecute
+
                 }
-                else // it is not a number
-                {
-                    //handle this somehow
-                }
+                else { }
+                // do nothing
             }
         }
-        private DateTime _timeStampSelection;
-        public DateTime TimeStampSelection
+        private DateTime _timeStampSelection = DateTime.Now;
+        public DateTime SelectedTimeStamp
         {
             get => _timeStampSelection;
             set
             {
                 _timeStampSelection = value;
+                OnPropertyChanged(nameof(SelectedTimeStamp));
+                CommandManager.InvalidateRequerySuggested();
             }
         }
-        private string _selectedBudget;
-        public string SelectedBudget
+        private Category _selectedBudget;
+        public Category SelectedBudget
         {
             get => _selectedBudget;
             set
             {
                 _selectedBudget = value;
+                OnPropertyChanged(nameof(SelectedBudget));
+                CommandManager.InvalidateRequerySuggested();
             }
         }
 
+        public ObservableCollection<Category> BudgetOptions = new ObservableCollection<Category>();
 
-        private ObservableCollection<string> _budgetOptions;
-        public ObservableCollection<string> BudgetOptions
-        {
-            get => _budgetOptions;
-            set
-            {
-                _budgetOptions = value;
-                OnPropertyChanged(nameof(BudgetOptions));
-            }
-        }
+        bool isExpense;
         #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -95,16 +142,6 @@ namespace Finance.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-
-        private void SaveTransaction(object obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void Cancel(object obj)
-        {
-            throw new NotImplementedException();
-        }
 
     }
 }
