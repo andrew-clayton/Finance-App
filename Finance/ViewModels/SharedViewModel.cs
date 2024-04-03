@@ -169,22 +169,25 @@ namespace Finance.ViewModels
             LoadBudgetsFromDatabase();
             LoadTransactionsFromDatabase();
             InitializePieChartData();
-            OpenAddExpenseCommand = new RelayCommand(o => OpenAddTransactionDialog(true));
-            OpenAddRevenueCommand = new RelayCommand(o => OpenAddTransactionDialog(false));
+            OpenAddExpenseCommand = new RelayCommand(o => OpenAddTransactionView(true));
+            OpenAddRevenueCommand = new RelayCommand(o => OpenAddTransactionView(false));
 
             if (Budgets.Any())
                 SelectedBudget = Budgets[0];
         }
 
-        private void OpenAddTransactionDialog(object isExpense)
+        private void OpenAddTransactionView(object isExpense)
         {
-            var dialog = new AddTransactionDialog();
+            var dialog = new AddTransactionView();
             bool isExpenseTransaction = (bool)isExpense;
             var viewModel = new AddTransactionViewModel(isExpenseTransaction);
 
 
             dialog.DataContext = viewModel;
             dialog.ShowDialog();
+            LoadTransactionsFromDatabase();
+            OnPropertyChanged(nameof(Transactions));
+            RefreshCurrentTransactions();
         }
 
         private void InitializePieChartData()
@@ -211,6 +214,7 @@ namespace Finance.ViewModels
 
         private async void LoadTransactionsFromDatabase()
         {
+            Transactions.Clear();
             var transactionList = await transactionService.GetAllTransactionsAsync();
             foreach (var transaction in transactionList)
             {

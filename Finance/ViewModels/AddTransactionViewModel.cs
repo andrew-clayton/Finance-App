@@ -15,28 +15,15 @@ namespace Finance.ViewModels
 {
     public class AddTransactionViewModel : INotifyPropertyChanged
     {
-        //AddTransactionViewModel()
-        //{
-        //    SaveCommand = new RelayCommand(SaveTransaction, CanSaveTransaction);
-        //    CancelCommand = new RelayCommand(CancelTransaction);
-
-        //    var budgetOptions = Enum.GetValues(typeof(Category));
-        //    SelectedBudget = BudgetOptions[0];
-        //}
-
         public AddTransactionViewModel(bool isExpense)
         {
+            var budgetOptions = Enum.GetValues(typeof(Category));
+
             this.isExpense = isExpense;
             SaveCommand = new RelayCommand(SaveTransaction, CanSaveTransaction);
             CancelCommand = new RelayCommand(CancelTransaction);
 
-            var budgetOptions = Enum.GetValues(typeof(Category));
-            foreach (var option in budgetOptions)
-            {
-                if (option is Category categoryOption)
-                    BudgetOptions.Add(categoryOption);
-                else throw new NotImplementedException();
-            }
+            BudgetOptions = new ObservableCollection<Category>(Enum.GetValues(typeof(Category)).Cast<Category>());
             SelectedBudget = BudgetOptions[0];
         }
 
@@ -55,7 +42,7 @@ namespace Finance.ViewModels
         }
 
         // Save the new transaction to the database
-        private void SaveTransaction(object obj)
+        private async void SaveTransaction(object obj)
         {
             ATransaction newTransaction = new ATransaction();
             if (!isExpense) newTransaction.Value = SelectedValue;
@@ -65,7 +52,9 @@ namespace Finance.ViewModels
             newTransaction.Budget = SelectedBudget;
 
             var transactionService = new TransactionService();
-            transactionService.AddTransaction(newTransaction);
+            await transactionService.AddTransaction(newTransaction);
+            var window = obj as Window;
+            window?.Close();
         }
 
         // exit the dialog somehow
@@ -131,7 +120,7 @@ namespace Finance.ViewModels
             }
         }
 
-        public ObservableCollection<Category> BudgetOptions = new ObservableCollection<Category>();
+        public ObservableCollection<Category> BudgetOptions { get; set; }
 
         bool isExpense;
         #endregion

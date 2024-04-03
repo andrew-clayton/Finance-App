@@ -16,5 +16,16 @@ namespace Finance.Models
         public string Title { get; set; }
         public string? Description { get; set; }
         public Category Budget { get; set; }
+
+        public ATransaction()
+        {
+            Description = string.Empty;
+            TimeStamp = DateTime.Now;
+            IsReoccuring = false;
+            Title = string.Empty;
+            Budget = Category.None;
+            Value = 0;
+        }
     }
+
 }
