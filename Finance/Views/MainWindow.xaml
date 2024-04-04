@@ -18,6 +18,9 @@
     <Grid>
         <TabControl Name="tcList">
             <TabItem Header="Overview">
+
+
+
                 <!--This will be a grid split into 6 - 2 rows, 3 columns-->
                 <!--This is defined as a 2x2 on a higher level, but the bottom rom will span both columns and have a subgrid split into 3 columns-->
                 <Grid ShowGridLines="False">
@@ -26,32 +29,36 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
                     <!--End of grid definitions-->
 
-                    <Grid Grid.Row="0" Grid.Column="0" >
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
 
-                        <!--The first column will the be monthly net value-->
-                        <TextBlock Text="{Binding netIncome, StringFormat='Net: ${0}'}" FontSize="18" Margin="5"/>
 
-                        <lvc:PieChart x:Name="PieChart" LegendLocation="Right" Series="{Binding PieChartData}" 
+                    <!--Top row-->
+                    <!--The top row will be split into 3 columns: the piechart, the budgets listview, and then the months picker-->
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        
+                        <!--First column-->
+                        <Grid Grid.Column="0" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <!--The first column will the be monthly net value-->
+                            <TextBlock Text="{Binding netIncome, StringFormat='Net: ${0}'}" FontSize="18" Margin="5"/>
+
+                            <lvc:PieChart x:Name="PieChart" LegendLocation="Right" Series="{Binding PieChartData}" 
                                                Grid.Row="1" Margin="10,5,10,10" />
-                    </Grid>
+                        </Grid>
 
-
-                    <!--Top row, second half-->
-                    <Grid Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
-
-                        <Grid>
+                        <!--Second column-->
+                        <!--I use a grid here with two rows to keep some info above the budgets listview-->
+                        <Grid Grid.Column="1">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
@@ -65,8 +72,6 @@
                                     <TextBlock Text="{Binding AmountOfBudgetSpent, Converter={StaticResource AbsoluteValueConverter}, StringFormat='Budget spent: ${0}     '}" />
                                     <TextBlock Text="{Binding PercentageOfBudgetSpent, StringFormat='Percentage of budget spent: {0}%     '}" />
                                 </StackPanel>
-
-
                             </StackPanel>
 
                             <ListView Grid.Row="1" Name="budgetsListView" ItemsSource="{Binding CurrentBudgetTransactions}">
@@ -77,67 +82,86 @@
                                 </ListView.ContextMenu>
                                 <ListView.View>
                                     <GridView>
-                                        <GridViewColumn Header="Value" Width="100" DisplayMemberBinding="{Binding Value}"/>
-                                        <GridViewColumn Header="Title" Width="125" DisplayMemberBinding="{Binding Title}"/>
-                                        <GridViewColumn Header="Date" Width="145" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
+                                        <GridViewColumn Header="Transactions" Width="Auto" DisplayMemberBinding="{Binding Value}"/>
+                                        <GridViewColumn Header="Title" Width="Auto" DisplayMemberBinding="{Binding Title}"/>
+                                        <GridViewColumn Header="Date" Width="Auto" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
                         </Grid>
+
+                        <!--Third column: month picker info-->
+                        <StackPanel Grid.Column="2" Margin="20">
+                            <TextBlock Text="Selected month:" Margin="5,20,0,0"/>
+                            <DatePicker Name="DatePicker" SelectedDate="{Binding selectedDate, Mode=TwoWay}" Margin="5,0,0,25"/>
+
+                            <CheckBox x:Name="viewAllMonths" Content="View All Months" Margin="5,0,0,0" IsChecked="{Binding ViewAllMonths, Mode=TwoWay}" />
+                        </StackPanel>
+
+                        <!--End of row-->
                     </Grid>
 
-                    <!--Bottom half-->
+                    <!--End of top row-->
 
-                    <!--First third-->
-                    <!--This will be where the user selects the current month, I think... for now at least-->
-                    <StackPanel Grid.Row="1" Grid.Column="0">
-                        <TextBlock Text="Choose what month's finaces you'd like to view" Margin="5,20,0,0"/>
-                        <DatePicker Name="DatePicker" SelectedDate="{Binding selectedDate, Mode=TwoWay}" Margin="5,0,0,25"/>
 
-                        <CheckBox x:Name="viewAllMonths" Content="View All Months" Margin="5,0,0,0" IsChecked="{Binding ViewAllMonths, Mode=TwoWay}" />
-                    </StackPanel>
+                    <!--Bottom row-->
+                    <!--This will be split into two things: the revenues listview and the expenses listview-->
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-                    <!--Bottom half, second third-->
-                    <ListView Grid.Column="1" Grid.Row="1" Name="RevenuesListView" Margin="15" ItemsSource="{Binding Revenues}">
-                        <ListView.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Add Revenue" Command="{Binding OpenAddRevenueCommand}" />
-                                <!--<MenuItem Header="Edit Transaction" Command="{Binding ~~~~}" />-->
-                                <MenuItem Header="Delete Transaction" Command="{Binding DeleteTransactionCommand}"
+                        <!--First half -->
+                        <ListView Grid.Column="0" Name="RevenuesListView" Margin="15" ItemsSource="{Binding Revenues}">
+                            <ListView.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Add Revenue" Command="{Binding OpenAddRevenueCommand}" />
+                                    <!--<MenuItem Header="Edit Transaction" Command="{Binding ~~~~}" />-->
+                                    <MenuItem Header="Delete Transaction" Command="{Binding DeleteTransactionCommand}"
                                           CommandParameter="{Binding Path=PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
-                            </ContextMenu>
-                        </ListView.ContextMenu>
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Header="Revenues" Width="100" DisplayMemberBinding="{Binding Value}"/>
-                                <GridViewColumn Header="Title" Width="125" DisplayMemberBinding="{Binding Title}"/>
-                                <GridViewColumn Header="Date" Width="145" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
-                                <GridViewColumn Header="Budget" Width="125" DisplayMemberBinding="{Binding Budget}"/>
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
+                                </ContextMenu>
+                            </ListView.ContextMenu>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Revenues" Width="Auto" DisplayMemberBinding="{Binding Value}"/>
+                                    <GridViewColumn Header="Title" Width="Auto" DisplayMemberBinding="{Binding Title}"/>
+                                    <GridViewColumn Header="Date" Width="Auto" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
+                                    <GridViewColumn Header="Budget" Width="Auto" DisplayMemberBinding="{Binding Budget}"/>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                        <!--End of first half-->
 
-                    <!--Bottom half, 3rd third-->
-                    <ListView Grid.Column="2" Grid.Row="1" Name="ExpensesListView" Margin="15" ItemsSource="{Binding Expenses}" >
-                        <ListView.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Add Expense" Command="{Binding OpenAddExpenseCommand}" />
-                                <!--<MenuItem Header="Edit Transaction" Command="{Binding ~~~~}"  />-->
-                                <MenuItem Header="Delete Transaction" Command="{Binding DeleteTransactionCommand}"
+                        <!--Second half of row-->
+                        <ListView Grid.Column="1" Name="ExpensesListView" Margin="15" ItemsSource="{Binding Expenses}" >
+                            <ListView.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Add Expense" Command="{Binding OpenAddExpenseCommand}" />
+                                    <!--<MenuItem Header="Edit Transaction" Command="{Binding ~~~~}"  />-->
+                                    <MenuItem Header="Delete Transaction" Command="{Binding DeleteTransactionCommand}"
                                           CommandParameter="{Binding Path=PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
-                            </ContextMenu>
-                        </ListView.ContextMenu>
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Header="Expenses" Width="100" DisplayMemberBinding="{Binding Value, Converter={StaticResource AbsoluteValueConverter}}"/>
-                                <GridViewColumn Header="Title" Width="125" DisplayMemberBinding="{Binding Title}"/>
-                                <GridViewColumn Header="Date" Width="145" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
-                                <GridViewColumn Header="Budget" Width="125" DisplayMemberBinding="{Binding Budget}"/>
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
+                                </ContextMenu>
+                            </ListView.ContextMenu>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Expenses" Width="Auto" DisplayMemberBinding="{Binding Value, Converter={StaticResource AbsoluteValueConverter}}"/>
+                                    <GridViewColumn Header="Title" Width="Auto" DisplayMemberBinding="{Binding Title}"/>
+                                    <GridViewColumn Header="Date" Width="Auto" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
+                                    <GridViewColumn Header="Budget" Width="Auto" DisplayMemberBinding="{Binding Budget}"/>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                        <!--End of second half of row-->
+                    </Grid>
+                    <!--End of bottom row-->
+
                 </Grid>
+
+
+
             </TabItem>
+
 
         </TabControl>
     </Grid>
