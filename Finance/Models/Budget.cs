@@ -13,20 +13,20 @@ namespace Finance.Models
     {
         public Budget()
         {
-            AllotedAmount = 0;
+            AllottedAmount = 0;
             Type = Category.None;
             TimeStamp = DateTime.Now;
         }
         public Budget(Category category)
         {
-            AllotedAmount = 0;
+            AllottedAmount = 0;
             Type = Category.None;
             Type = category;
             TimeStamp = DateTime.Now;
         }
         public int Id { get; set; }
         public Category Type{ get; set; }
-        public float AllotedAmount { get; set; }
+        public float AllottedAmount { get; set; }
         public DateTime TimeStamp { get; set; }
 
     }

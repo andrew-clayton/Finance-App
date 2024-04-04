@@ -27,7 +27,7 @@
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
@@ -64,19 +64,24 @@
                             <StackPanel Grid.Row="0">
                                 <ComboBox ItemsSource="{Binding Budgets}" SelectedItem="{Binding SelectedBudget, Mode=TwoWay}" 
                                           DisplayMemberPath="Type" />
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding SelectedBudget.AllotedAmount, StringFormat='Budget limit: ${0}     '}" />
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding AmountAllottedForBudget, StringFormat='Budget limit: ${0}     '}" />
                                     <TextBlock Text="{Binding AmountOfBudgetSpent, Converter={StaticResource AbsoluteValueConverter}, StringFormat='Budget spent: ${0}     '}" />
-                                    <TextBlock Text="{Binding PercentageOfBudgetSpent, StringFormat='Percentage of budget spent: %{0}     '}" />
+                                    <TextBlock Text="{Binding PercentageOfBudgetSpent, StringFormat='Percentage of budget spent: {0}%     '}" />
                                 </StackPanel>
 
 
                             </StackPanel>
 
                             <ListView Grid.Row="1" Name="budgetsListView" ItemsSource="{Binding CurrentBudgetTransactions}">
+                                <ListView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Edit Current Budget" Command="{Binding OpenEditBudgetCommand}" />
+                                    </ContextMenu>
+                                </ListView.ContextMenu>
                                 <ListView.View>
                                     <GridView>
-                                        <GridViewColumn Header="Income" Width="100" DisplayMemberBinding="{Binding Value}"/>
+                                        <GridViewColumn Header="Value" Width="100" DisplayMemberBinding="{Binding Value}"/>
                                         <GridViewColumn Header="Title" Width="125" DisplayMemberBinding="{Binding Title}"/>
                                         <GridViewColumn Header="Date" Width="145" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
                                     </GridView>
@@ -93,7 +98,6 @@
                         <TextBlock Text="Choose what month's finaces you'd like to view" Margin="5,20,0,0"/>
                         <DatePicker Name="DatePicker" SelectedDate="{Binding selectedDate, Mode=TwoWay}" Margin="5,0,0,25"/>
 
-                        <TextBlock Text="Or select here if you'd like to view all your transactions" Margin="5,5,50,3"/>
                         <CheckBox x:Name="viewAllMonths" Content="View All Months" Margin="5,0,0,0" IsChecked="{Binding ViewAllMonths, Mode=TwoWay}" />
                     </StackPanel>
 
@@ -109,7 +113,7 @@
                         </ListView.ContextMenu>
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="Income" Width="100" DisplayMemberBinding="{Binding Value}"/>
+                                <GridViewColumn Header="Revenues" Width="100" DisplayMemberBinding="{Binding Value}"/>
                                 <GridViewColumn Header="Title" Width="125" DisplayMemberBinding="{Binding Title}"/>
                                 <GridViewColumn Header="Date" Width="145" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
 

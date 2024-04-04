@@ -34,7 +34,7 @@ namespace Finance.ViewModels
         // This method checks if all parameters are valid, so I can check this in each property's setter
         private bool CanSaveTransaction(object obj)
         {
-            if (String.IsNullOrEmpty(SelectedLabel) || String.IsNullOrEmpty(SelectedValue.ToString()))
+            if (String.IsNullOrEmpty(SelectedLabel) || String.IsNullOrEmpty(SelectedValue) || !float.TryParse(SelectedValue, out var _))
             {
                 return false;
             }
@@ -45,8 +45,8 @@ namespace Finance.ViewModels
         private async void SaveTransaction(object obj)
         {
             ATransaction newTransaction = new ATransaction();
-            if (!isExpense) newTransaction.Value = SelectedValue;
-            else newTransaction.Value = SelectedValue * -1;
+            if (!isExpense) newTransaction.Value = float.Parse(SelectedValue);
+            else newTransaction.Value = float.Parse(SelectedValue) * -1;
             newTransaction.TimeStamp = SelectedTimeStamp;
             newTransaction.Title = SelectedLabel;
             newTransaction.Budget = SelectedBudget;
@@ -79,21 +79,22 @@ namespace Finance.ViewModels
             }
 
         }
-        private float _valueSelection;
-        public float SelectedValue
+        private string _valueSelection;
+        public string SelectedValue
         {
             get => _valueSelection;
             set
             {
-                if (float.TryParse(value.ToString(), out float parsedNum))
-                {
-                    // it is a number
-                    _valueSelection = parsedNum;
-                    OnPropertyChanged(nameof(SelectedValue));
-                    CommandManager.InvalidateRequerySuggested(); // notify re-evaluation of CanExecute
+                //if (float.TryParse(value.ToString(), out float parsedNum))
+                //{
+                // it is a number
+                //_valueSelection = parsedNum;
+                _valueSelection = value;
+                OnPropertyChanged(nameof(SelectedValue));
+                CommandManager.InvalidateRequerySuggested(); // notify re-evaluation of CanExecute
 
-                }
-                else { }
+                //}
+                //else { }
                 // do nothing
             }
         }

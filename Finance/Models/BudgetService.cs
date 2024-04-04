@@ -72,6 +72,7 @@ namespace Finance.Models
             }
         }
 
+        // Find budgets for a given Category
         public async Task<Budget> FindBudgetWithCategory(Category type)
         {
             var budgetList = await GetAllBudgetsAsync();
@@ -85,6 +86,15 @@ namespace Finance.Models
             return null; // not supposed to happen
         }
 
+        // Find a specific budget
+        public Budget FindBudget(int id)
+        {
+            using (var context = new FinanceContext())
+            {
+                Budget? budget = context.Budgets.Find(id);
+                return budget;
+            }
+        }
 
         // Update
         public async Task UpdateBudget(Budget updatedBudget)
@@ -92,10 +102,10 @@ namespace Finance.Models
             using (var context = new FinanceContext())
             {
                 // Find the existing budget by ID
-                Budget existingBudget = await context.Budgets.FindAsync(updatedBudget);
+                Budget existingBudget = await context.Budgets.FindAsync(updatedBudget.Id);
                 if (existingBudget != null)
                 {
-                    existingBudget.AllotedAmount = updatedBudget.AllotedAmount;
+                    existingBudget.AllottedAmount = updatedBudget.AllottedAmount;
                     // Mark the buddget as modified
                     context.Entry(existingBudget).State = EntityState.Modified;
 

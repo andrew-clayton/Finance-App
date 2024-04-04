@@ -12,6 +12,7 @@ using LiveCharts.Wpf;
 using SQLitePCL;
 using Finance.Views;
 using System.Windows.Input;
+using System.Diagnostics;
 
 
 namespace Finance.ViewModels
@@ -21,13 +22,17 @@ namespace Finance.ViewModels
         private TransactionService transactionService = new TransactionService();
         public ObservableCollection<ATransaction> Transactions = new ObservableCollection<ATransaction>();
         public IEnumerable<ATransaction> CurrentTransactions => Transactions.Where(t => ViewAllMonths || (t.TimeStamp.Month == selectedDate.Month &&
-        selectedDate.Year == t.TimeStamp.Year && TransactionMatchesBudgetMonth(t, SelectedBudget)));
-        public IEnumerable<ATransaction> CurrentBudgetTransactions => CurrentTransactions.Where(t => t.Budget == SelectedBudget.Type);
+        selectedDate.Year == t.TimeStamp.Year));
+        public IEnumerable<ATransaction> CurrentBudgetTransactions => CurrentTransactions.Where(t => t.Budget == SelectedBudget.Type && (TransactionMatchesBudgetMonth(t, SelectedBudget) || ViewAllMonths));
 
         public ObservableCollection<Budget> _budgets = new ObservableCollection<Budget>();
         public ObservableCollection<Budget> Budgets
         {
-            get => _budgets;
+            get
+            {
+                var currentBudgets = _budgets.Where(budget => budget.TimeStamp.Month == selectedDate.Month && budget.TimeStamp.Year == selectedDate.Year);
+                return new ObservableCollection<Budget>(currentBudgets);
+            }
             set
             {
                 _budgets = value;
@@ -39,6 +44,7 @@ namespace Finance.ViewModels
         public ICommand OpenAddRevenueCommand { get; private set; }
         public ICommand OpenAddExpenseCommand { get; private set; }
         public ICommand DeleteTransactionCommand { get; private set; }
+        public ICommand OpenEditBudgetCommand { get; private set; }
 
         public IEnumerable<ATransaction> Expenses => CurrentTransactions.Where(t => t.Value < 0);
         public IEnumerable<ATransaction> Revenues => CurrentTransactions.Where(t => t.Value >= 0);
@@ -52,6 +58,8 @@ namespace Finance.ViewModels
                 _selectedDate = value;
                 OnPropertyChanged(nameof(selectedDate));
                 RefreshCurrentTransactions();
+                var budgetService = new BudgetService();
+                budgetService.InitializeBudgetsForMonth(_selectedDate);
             }
         }
 
@@ -100,6 +108,7 @@ namespace Finance.ViewModels
                     OnPropertyChanged(nameof(ViewAllMonths));
                     // Trigger update of transactions when checkbox changes
                     RefreshCurrentTransactions();
+
                 }
             }
         }
@@ -117,6 +126,7 @@ namespace Finance.ViewModels
                     OnPropertyChanged(nameof(CurrentBudgetTransactions));
                     OnPropertyChanged(nameof(AmountOfBudgetSpent));
                     OnPropertyChanged(nameof(PercentageOfBudgetSpent));
+                    OnPropertyChanged(nameof(AmountAllottedForBudget));
                 }
             }
         }
@@ -126,7 +136,7 @@ namespace Finance.ViewModels
             get
             {
                 double totalBudgetSpent = CurrentBudgetTransactions.Sum(t => t.Value);
-                return (totalBudgetSpent / SelectedBudget.AllotedAmount) * 100;
+                return (Math.Abs(totalBudgetSpent) / SelectedBudget.AllottedAmount) * 100;
             }
         }
 
@@ -134,7 +144,15 @@ namespace Finance.ViewModels
         {
             get
             {
-                return CurrentBudgetTransactions.Sum(t => t.Value);
+                return CurrentBudgetTransactions.Sum(t => t.Value) * -1;
+            }
+        }
+
+        public double AmountAllottedForBudget
+        {
+            get
+            {
+                return SelectedBudget.AllottedAmount;
             }
         }
 
@@ -186,6 +204,7 @@ namespace Finance.ViewModels
             OpenAddExpenseCommand = new RelayCommand(o => OpenAddTransactionView(true));
             OpenAddRevenueCommand = new RelayCommand(o => OpenAddTransactionView(false));
             DeleteTransactionCommand = new RelayCommand(DeleteSelectedTransaction, CanDeleteTransaction);
+            OpenEditBudgetCommand = new RelayCommand(o => OpenEditBudgetDialog(SelectedBudget));
         }
 
         private void DeleteSelectedTransaction(object parameter)
@@ -213,6 +232,29 @@ namespace Finance.ViewModels
             LoadTransactionsFromDatabase();
             OnPropertyChanged(nameof(Transactions));
             RefreshCurrentTransactions();
+        }
+
+        private void OpenEditBudgetDialog(object parameter)
+        {
+            // Create and show view and view model
+            var dialog = new SetBudgetView();
+            Budget budget = parameter as Budget;
+            var viewModel = new SetBudgetViewModel(budget);
+
+            dialog.DataContext = viewModel;
+            dialog.ShowDialog();
+
+            // Now we must update the selected budget using the ID - no return value from the viewmodel
+            var budgetService = new BudgetService();
+            var oldBudget = SelectedBudget;
+            var newBudget = budgetService.FindBudget(oldBudget.Id);
+
+            Budgets.Add(newBudget);
+            SelectedBudget = newBudget;
+
+            Budgets.Remove(oldBudget);
+            OnPropertyChanged(nameof(Budgets));
+
         }
 
         private void InitializePieChartData()
@@ -254,7 +296,7 @@ namespace Finance.ViewModels
             var budgetList = await budgetService.GetAllBudgetsAsync();
             foreach (var budget in budgetList)
             {
-                Budgets.Add(budget);
+                _budgets.Add(budget);
             }
             OnPropertyChanged(nameof(Budgets));
         }
