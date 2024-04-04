@@ -41,14 +41,10 @@
                         </Grid.RowDefinitions>
 
                         <!--The first column will the be monthly net value-->
-                        <StackPanel Orientation="Horizontal" Grid.Row="0">
-                            <TextBlock Text="{Binding netIncome, StringFormat='Net: ${0}   '}" FontSize="21" />
-                            <TextBlock Text="{Binding netRevenues, StringFormat='Earned: ${0}   '}" Foreground="LimeGreen" FontSize="21" />
-                            <TextBlock Text="{Binding netExpenses, Converter={StaticResource AbsoluteValueConverter}, StringFormat='Spent: ${0}'}" Foreground="OrangeRed" FontSize="21" />
-                        </StackPanel>
+                        <TextBlock Text="{Binding netIncome, StringFormat='Net: ${0}'}" FontSize="18" Margin="5"/>
 
                         <lvc:PieChart x:Name="PieChart" LegendLocation="Right" Series="{Binding PieChartData}" 
-                                               Grid.Row="1" Margin="10"/>
+                                               Grid.Row="1" Margin="10,5,10,10" />
                     </Grid>
 
 
@@ -116,7 +112,7 @@
                                 <GridViewColumn Header="Revenues" Width="100" DisplayMemberBinding="{Binding Value}"/>
                                 <GridViewColumn Header="Title" Width="125" DisplayMemberBinding="{Binding Title}"/>
                                 <GridViewColumn Header="Date" Width="145" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
-
+                                <GridViewColumn Header="Budget" Width="125" DisplayMemberBinding="{Binding Budget}"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -128,13 +124,15 @@
                                 <MenuItem Header="Add Expense" Command="{Binding OpenAddExpenseCommand}" />
                                 <!--<MenuItem Header="Edit Transaction" Command="{Binding ~~~~}"  />-->
                                 <MenuItem Header="Delete Transaction" Command="{Binding DeleteTransactionCommand}"
-                                          CommandParameter="{Binding Path=PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />                            </ContextMenu>
+                                          CommandParameter="{Binding Path=PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                            </ContextMenu>
                         </ListView.ContextMenu>
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Expenses" Width="100" DisplayMemberBinding="{Binding Value, Converter={StaticResource AbsoluteValueConverter}}"/>
                                 <GridViewColumn Header="Title" Width="125" DisplayMemberBinding="{Binding Title}"/>
                                 <GridViewColumn Header="Date" Width="145" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
+                                <GridViewColumn Header="Budget" Width="125" DisplayMemberBinding="{Binding Budget}"/>
                             </GridView>
                         </ListView.View>
                     </ListView>

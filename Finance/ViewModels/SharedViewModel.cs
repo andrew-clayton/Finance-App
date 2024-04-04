@@ -131,12 +131,12 @@ namespace Finance.ViewModels
             }
         }
 
-        public double PercentageOfBudgetSpent
+        public string PercentageOfBudgetSpent
         {
             get
             {
-                double totalBudgetSpent = CurrentBudgetTransactions.Sum(t => t.Value);
-                return (Math.Abs(totalBudgetSpent) / SelectedBudget.AllottedAmount) * 100;
+                double percent = (AmountOfBudgetSpent / SelectedBudget.AllottedAmount) * 100;
+                return percent.ToString("0.00");
             }
         }
 
@@ -144,7 +144,8 @@ namespace Finance.ViewModels
         {
             get
             {
-                return CurrentBudgetTransactions.Sum(t => t.Value) * -1;
+                IEnumerable<ATransaction> budgetTransactions = CurrentBudgetTransactions.Where(t => t.Value < 0);
+                return budgetTransactions.Sum(t => t.Value) * -1;
             }
         }
 
