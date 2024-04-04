@@ -21,7 +21,7 @@ namespace Finance.ViewModels
         private TransactionService transactionService = new TransactionService();
         public ObservableCollection<ATransaction> Transactions = new ObservableCollection<ATransaction>();
         public IEnumerable<ATransaction> CurrentTransactions => Transactions.Where(t => ViewAllMonths || (t.TimeStamp.Month == selectedDate.Month &&
-        selectedDate.Year == t.TimeStamp.Year));
+        selectedDate.Year == t.TimeStamp.Year && TransactionMatchesBudgetMonth(t, SelectedBudget)));
         public IEnumerable<ATransaction> CurrentBudgetTransactions => CurrentTransactions.Where(t => t.Budget == SelectedBudget.Type);
 
         public ObservableCollection<Budget> _budgets = new ObservableCollection<Budget>();
@@ -168,14 +168,24 @@ namespace Finance.ViewModels
         public SharedViewModel()
         {
             LoadBudgetsFromDatabase();
+            // if there is a budget for this month already, I want to have that set by default. otherwise a new one shall be created
+            var currentBudget = Budgets.Where(b => b.TimeStamp.Month == DateTime.Now.Month && b.TimeStamp.Year == DateTime.Now.Year).FirstOrDefault();
+            if (currentBudget == null)
+            {
+                // if there is not already a budget for this month, we shall create a new one
+                var budgetService = new BudgetService();
+                var newBudget = new Budget();
+                budgetService.InitializeBudgetsForMonth(DateTime.Now);
+            }
+
+            SelectedBudget = Budgets.Where(budget => budget.TimeStamp.Month == DateTime.Now.Month && budget.TimeStamp.Year == DateTime.Now.Year && budget.Type == Category.None).FirstOrDefault();
+            if (SelectedBudget == null) throw new Exception("SelectedBudget is null");
+
             LoadTransactionsFromDatabase();
             InitializePieChartData();
             OpenAddExpenseCommand = new RelayCommand(o => OpenAddTransactionView(true));
             OpenAddRevenueCommand = new RelayCommand(o => OpenAddTransactionView(false));
             DeleteTransactionCommand = new RelayCommand(DeleteSelectedTransaction, CanDeleteTransaction);
-
-            if (Budgets.Any())
-                SelectedBudget = Budgets[0];
         }
 
         private void DeleteSelectedTransaction(object parameter)
@@ -296,6 +306,10 @@ namespace Finance.ViewModels
             OnPropertyChanged(nameof(PieChartData));
         }
 
-
+        private bool TransactionMatchesBudgetMonth(ATransaction transaction, Budget budget)
+        {
+            if (transaction.TimeStamp.Month == budget.TimeStamp.Month && transaction.TimeStamp.Year == budget.TimeStamp.Year) return true;
+            else return false;
+        }
     }
 }

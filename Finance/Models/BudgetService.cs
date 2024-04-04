@@ -11,12 +11,13 @@ namespace Finance.Models
     {
         public BudgetService()
         {
+            if (!AreBudgetsInitializedForMonth(DateTime.Now)) InitializeBudgetsForMonth(DateTime.Now);
         }
 
-        // Create new budgets
-        public async Task InitializeBudgets()
+        // Create new budgets for a given month
+        public async Task InitializeBudgetsForMonth(DateTime timestamp)
         {
-            if (AreBudgetsInitialized()) return;
+            if (AreBudgetsInitializedForMonth(timestamp)) return;
             using (var context = new FinanceContext())
             {
                 // We need the list of all budgets
@@ -28,6 +29,7 @@ namespace Finance.Models
                     if (category is Category cat)
                     {
                         Budget currentBudget = new Budget(cat);
+                        currentBudget.TimeStamp = timestamp;
                         context.Budgets.Add(currentBudget);
                         await context.SaveChangesAsync();
                     }
@@ -37,21 +39,32 @@ namespace Finance.Models
             }
         }
 
-
-        // Check if budgets were initialized 
-        bool AreBudgetsInitialized()
+        // Add new singular budget
+        public async Task AddBudget(Budget budget)
         {
             using (var context = new FinanceContext())
             {
-                return context.Budgets.Any();
+                context.Budgets.Add(budget);
+            }
+        }
+
+
+        // Check if budgets were initialized 
+        bool AreBudgetsInitializedForMonth(DateTime timestamp)
+        {
+            using (var context = new FinanceContext())
+            {
+                IEnumerable<Budget> list = context.Budgets.Where(b => b.TimeStamp.Month == timestamp.Month && b.TimeStamp.Year == timestamp.Year);
+                if (list.Count() == 0) return false;
+                else return true;
             }
         }
 
         // Read
         public async Task<List<Budget>> GetAllBudgetsAsync()
         {
-            if (!AreBudgetsInitialized()) {
-                InitializeBudgets();
+            if (!AreBudgetsInitializedForMonth(DateTime.Now)) {
+                await InitializeBudgetsForMonth(DateTime.Now);
             }
             using (var context = new FinanceContext())
             {
