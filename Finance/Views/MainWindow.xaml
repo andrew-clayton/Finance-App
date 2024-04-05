@@ -41,7 +41,7 @@
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        
+
                         <!--First column-->
                         <Grid Grid.Column="0" >
                             <Grid.RowDefinitions>
@@ -74,20 +74,26 @@
                                 </StackPanel>
                             </StackPanel>
 
-                            <ListView Grid.Row="1" Name="budgetsListView" ItemsSource="{Binding CurrentBudgetTransactions}">
-                                <ListView.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Header="Edit Current Budget" Command="{Binding OpenEditBudgetCommand}" />
-                                    </ContextMenu>
-                                </ListView.ContextMenu>
-                                <ListView.View>
-                                    <GridView>
-                                        <GridViewColumn Header="Transactions" Width="Auto" DisplayMemberBinding="{Binding Value}"/>
-                                        <GridViewColumn Header="Title" Width="Auto" DisplayMemberBinding="{Binding Title}"/>
-                                        <GridViewColumn Header="Date" Width="Auto" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
-                                    </GridView>
-                                </ListView.View>
-                            </ListView>
+                            <StackPanel Grid.Row="1" >
+                                <!--Title-->
+                                <TextBlock Text="Transactions in Selected Budget" FontSize="20" FontWeight="Bold" Padding="5" HorizontalAlignment="Center" />
+                                
+                                <!--Table-->
+                                <ListView Grid.Row="1" Name="budgetsListView" ItemsSource="{Binding CurrentBudgetTransactions}">
+                                    <ListView.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Edit Current Budget" Command="{Binding OpenEditBudgetCommand}" />
+                                        </ContextMenu>
+                                    </ListView.ContextMenu>
+                                    <ListView.View>
+                                        <GridView>
+                                            <GridViewColumn Header="Transactions" Width="Auto" DisplayMemberBinding="{Binding Value}"/>
+                                            <GridViewColumn Header="Title" Width="Auto" DisplayMemberBinding="{Binding Title}"/>
+                                            <GridViewColumn Header="Date" Width="Auto" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                            </StackPanel>
                         </Grid>
 
                         <!--Third column: month picker info-->
@@ -113,45 +119,51 @@
                         </Grid.ColumnDefinitions>
 
                         <!--First half -->
-                        <ListView Grid.Column="0" Name="RevenuesListView" Margin="15" ItemsSource="{Binding Revenues}">
-                            <ListView.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="Add Revenue" Command="{Binding OpenAddRevenueCommand}" />
-                                    <!--<MenuItem Header="Edit Transaction" Command="{Binding ~~~~}" />-->
-                                    <MenuItem Header="Delete Transaction" Command="{Binding DeleteTransactionCommand}"
+                        <StackPanel Grid.Column="0" >
+                            <TextBlock Text="Revenues" FontSize="20" FontWeight="Bold" Padding="5" HorizontalAlignment="Center" />
+                            <ListView Name="RevenuesListView" Margin="15" ItemsSource="{Binding Revenues}">
+                                <ListView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Add Revenue" Command="{Binding OpenAddRevenueCommand}" />
+                                        <!--<MenuItem Header="Edit Transaction" Command="{Binding ~~~~}" />-->
+                                        <MenuItem Header="Delete Transaction" Command="{Binding DeleteTransactionCommand}"
                                           CommandParameter="{Binding Path=PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
-                                </ContextMenu>
-                            </ListView.ContextMenu>
-                            <ListView.View>
-                                <GridView>
-                                    <GridViewColumn Header="Revenues" Width="Auto" DisplayMemberBinding="{Binding Value}"/>
-                                    <GridViewColumn Header="Title" Width="Auto" DisplayMemberBinding="{Binding Title}"/>
-                                    <GridViewColumn Header="Date" Width="Auto" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
-                                    <GridViewColumn Header="Budget" Width="Auto" DisplayMemberBinding="{Binding Budget}"/>
-                                </GridView>
-                            </ListView.View>
-                        </ListView>
+                                    </ContextMenu>
+                                </ListView.ContextMenu>
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="Revenues" Width="Auto" DisplayMemberBinding="{Binding Value}"/>
+                                        <GridViewColumn Header="Title" Width="Auto" DisplayMemberBinding="{Binding Title}"/>
+                                        <GridViewColumn Header="Date" Width="Auto" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
+                                        <GridViewColumn Header="Budget" Width="Auto" DisplayMemberBinding="{Binding Budget}"/>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </StackPanel>
                         <!--End of first half-->
 
                         <!--Second half of row-->
-                        <ListView Grid.Column="1" Name="ExpensesListView" Margin="15" ItemsSource="{Binding Expenses}" >
-                            <ListView.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="Add Expense" Command="{Binding OpenAddExpenseCommand}" />
-                                    <!--<MenuItem Header="Edit Transaction" Command="{Binding ~~~~}"  />-->
-                                    <MenuItem Header="Delete Transaction" Command="{Binding DeleteTransactionCommand}"
+                        <StackPanel Grid.Column="1" >
+                            <TextBlock Text="Expenses" FontSize="20" FontWeight="Bold" Padding="5" HorizontalAlignment="Center" />
+                            <ListView Name="ExpensesListView" Margin="15" ItemsSource="{Binding Expenses}" >
+                                <ListView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Add Expense" Command="{Binding OpenAddExpenseCommand}" />
+                                        <!--<MenuItem Header="Edit Transaction" Command="{Binding ~~~~}"  />-->
+                                        <MenuItem Header="Delete Transaction" Command="{Binding DeleteTransactionCommand}"
                                           CommandParameter="{Binding Path=PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
-                                </ContextMenu>
-                            </ListView.ContextMenu>
-                            <ListView.View>
-                                <GridView>
-                                    <GridViewColumn Header="Expenses" Width="Auto" DisplayMemberBinding="{Binding Value, Converter={StaticResource AbsoluteValueConverter}}"/>
-                                    <GridViewColumn Header="Title" Width="Auto" DisplayMemberBinding="{Binding Title}"/>
-                                    <GridViewColumn Header="Date" Width="Auto" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
-                                    <GridViewColumn Header="Budget" Width="Auto" DisplayMemberBinding="{Binding Budget}"/>
-                                </GridView>
-                            </ListView.View>
-                        </ListView>
+                                    </ContextMenu>
+                                </ListView.ContextMenu>
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="Expenses" Width="Auto" DisplayMemberBinding="{Binding Value, Converter={StaticResource AbsoluteValueConverter}}"/>
+                                        <GridViewColumn Header="Title" Width="Auto" DisplayMemberBinding="{Binding Title}"/>
+                                        <GridViewColumn Header="Date" Width="Auto" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
+                                        <GridViewColumn Header="Budget" Width="Auto" DisplayMemberBinding="{Binding Budget}"/>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </StackPanel>
                         <!--End of second half of row-->
                     </Grid>
                     <!--End of bottom row-->
