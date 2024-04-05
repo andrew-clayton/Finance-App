@@ -77,7 +77,7 @@
                             <StackPanel Grid.Row="1" >
                                 <!--Title-->
                                 <TextBlock Text="Transactions in Selected Budget" FontSize="20" FontWeight="Bold" Padding="5" HorizontalAlignment="Center" />
-                                
+
                                 <!--Table-->
                                 <ListView Grid.Row="1" Name="budgetsListView" ItemsSource="{Binding CurrentBudgetTransactions}">
                                     <ListView.ContextMenu>
@@ -170,10 +170,7 @@
 
                 </Grid>
 
-
-
             </TabItem>
-
 
         </TabControl>
     </Grid>
