@@ -80,7 +80,7 @@
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
                                 <!--Title-->
-                                <TextBlock Text="Transactions in Selected Budget" FontSize="20" FontWeight="Bold" Padding="5" HorizontalAlignment="Center" />
+                                <TextBlock Text="Expenses Selected Budget" FontSize="20" FontWeight="Bold" Padding="5" HorizontalAlignment="Center" />
 
                                 <!--Table-->
                                 <ListView Grid.Row="1" Name="budgetsListView" ItemsSource="{Binding CurrentBudgetTransactions}">
@@ -91,9 +91,9 @@
                                     </ListView.ContextMenu>
                                     <ListView.View>
                                         <GridView>
-                                            <GridViewColumn Header="Transactions" Width="Auto" DisplayMemberBinding="{Binding Value}"/>
-                                            <GridViewColumn Header="Title" Width="Auto" DisplayMemberBinding="{Binding Title}"/>
-                                            <GridViewColumn Header="Date" Width="Auto" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
+                                            <GridViewColumn Header="Value" Width="125" DisplayMemberBinding="{Binding Value, Converter={StaticResource AbsoluteValueConverter}}"/>
+                                            <GridViewColumn Header="Label" Width="125" DisplayMemberBinding="{Binding Title}"/>
+                                            <GridViewColumn Header="Date" Width="125" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
                                         </GridView>
                                     </ListView.View>
                                 </ListView>
@@ -128,23 +128,24 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            
+
                             <TextBlock Text="Revenues" FontSize="20" FontWeight="Bold" Padding="5" HorizontalAlignment="Center" />
                             <ListView Name="RevenuesListView" Margin="15" ItemsSource="{Binding Revenues}" Grid.Row="1">
                                 <ListView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Add Revenue" Command="{Binding OpenAddRevenueCommand}" />
-                                        <!--<MenuItem Header="Edit Transaction" Command="{Binding ~~~~}" />-->
+                                        <MenuItem Header="Edit Transaction" Command="{Binding OpenEditTransactionCommand}" 
+                                                 CommandParameter="{Binding Path=PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
                                         <MenuItem Header="Delete Transaction" Command="{Binding DeleteTransactionCommand}"
                                           CommandParameter="{Binding Path=PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
                                     </ContextMenu>
                                 </ListView.ContextMenu>
                                 <ListView.View>
                                     <GridView>
-                                        <GridViewColumn Header="Revenues" Width="Auto" DisplayMemberBinding="{Binding Value}"/>
-                                        <GridViewColumn Header="Title" Width="Auto" DisplayMemberBinding="{Binding Title}"/>
-                                        <GridViewColumn Header="Date" Width="Auto" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
-                                        <GridViewColumn Header="Budget" Width="Auto" DisplayMemberBinding="{Binding Budget}"/>
+                                        <GridViewColumn Header="Value" Width="125" DisplayMemberBinding="{Binding Value}"/>
+                                        <GridViewColumn Header="Label" Width="125" DisplayMemberBinding="{Binding Title}"/>
+                                        <GridViewColumn Header="Date" Width="125" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
+                                        <GridViewColumn Header="Budget" Width="125" DisplayMemberBinding="{Binding Budget}"/>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
@@ -162,17 +163,18 @@
                                 <ListView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Add Expense" Command="{Binding OpenAddExpenseCommand}" />
-                                        <!--<MenuItem Header="Edit Transaction" Command="{Binding ~~~~}"  />-->
+                                        <MenuItem Header="Edit Transaction" Command="{Binding OpenEditTransactionCommand}" 
+                                            CommandParameter="{Binding Path=PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
                                         <MenuItem Header="Delete Transaction" Command="{Binding DeleteTransactionCommand}"
                                           CommandParameter="{Binding Path=PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
                                     </ContextMenu>
                                 </ListView.ContextMenu>
                                 <ListView.View>
                                     <GridView>
-                                        <GridViewColumn Header="Expenses" Width="Auto" DisplayMemberBinding="{Binding Value, Converter={StaticResource AbsoluteValueConverter}}"/>
-                                        <GridViewColumn Header="Title" Width="Auto" DisplayMemberBinding="{Binding Title}"/>
-                                        <GridViewColumn Header="Date" Width="Auto" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
-                                        <GridViewColumn Header="Budget" Width="Auto" DisplayMemberBinding="{Binding Budget}"/>
+                                        <GridViewColumn Header="Value" Width="125" DisplayMemberBinding="{Binding Value, Converter={StaticResource AbsoluteValueConverter}}"/>
+                                        <GridViewColumn Header="Label" Width="125" DisplayMemberBinding="{Binding Title}"/>
+                                        <GridViewColumn Header="Date" Width="125" DisplayMemberBinding="{Binding TimeStamp, StringFormat='{}{0:MM/dd/yyyy}'}"/>
+                                        <GridViewColumn Header="Budget" Width="125" DisplayMemberBinding="{Binding Budget}"/>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
