@@ -23,7 +23,7 @@ namespace Finance.ViewModels
         public ObservableCollection<ATransaction> Transactions = new ObservableCollection<ATransaction>();
         public IEnumerable<ATransaction> CurrentTransactions => Transactions.Where(t => ViewAllMonths || (t.TimeStamp.Month == selectedDate.Month &&
         selectedDate.Year == t.TimeStamp.Year));
-        public IEnumerable<ATransaction> CurrentBudgetTransactions => CurrentTransactions.Where(t => t.Budget == SelectedBudget.Type && (TransactionMatchesBudgetMonth(t, SelectedBudget) || ViewAllMonths));
+        public IEnumerable<ATransaction> CurrentBudgetTransactions => CurrentTransactions.Where(t => t.Budget == SelectedBudget.Type && (TransactionMatchesBudgetMonth(t, SelectedBudget) || ViewAllMonths) && t.Value < 0);
 
         public ObservableCollection<Budget> _budgets = new ObservableCollection<Budget>();
         public ObservableCollection<Budget> Budgets
@@ -45,6 +45,7 @@ namespace Finance.ViewModels
         public ICommand OpenAddExpenseCommand { get; private set; }
         public ICommand DeleteTransactionCommand { get; private set; }
         public ICommand OpenEditBudgetCommand { get; private set; }
+        public ICommand OpenEditTransactionCommand { get; private set; }
 
         public IEnumerable<ATransaction> Expenses => CurrentTransactions.Where(t => t.Value < 0);
         public IEnumerable<ATransaction> Revenues => CurrentTransactions.Where(t => t.Value >= 0);
@@ -209,6 +210,24 @@ namespace Finance.ViewModels
             OpenAddRevenueCommand = new RelayCommand(o => OpenAddTransactionView(false));
             DeleteTransactionCommand = new RelayCommand(DeleteSelectedTransaction, CanDeleteTransaction);
             OpenEditBudgetCommand = new RelayCommand(o => OpenEditBudgetDialog(SelectedBudget));
+            OpenEditTransactionCommand = new RelayCommand(OpenEditTransactionDialog);
+        }
+
+
+        private void OpenEditTransactionDialog(object parameter)
+        {
+            if (parameter is ATransaction oldTransaction)
+            {
+                var dialog = new AddTransactionView();
+                var viewModel = new EditTransactionViewModel(oldTransaction);
+
+                // todo: onwards may cause issues?
+                dialog.DataContext = viewModel;
+                dialog.ShowDialog();
+                LoadTransactionsFromDatabase();
+                OnPropertyChanged(nameof(Transactions));
+                RefreshCurrentTransactions();
+            }
         }
 
         private void DeleteSelectedTransaction(object parameter)

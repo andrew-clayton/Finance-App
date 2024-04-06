@@ -68,7 +68,7 @@ namespace Finance.Models
             using (var context = new FinanceContext())
             {
                 // Find the existing transaction by id
-                ATransaction existingTransaction = await context.Transactions.FindAsync(updatedTransaction);
+                ATransaction existingTransaction = context.Transactions.Find(updatedTransaction.Id);
                 if (existingTransaction != null)
                 {
                     existingTransaction.Value = updatedTransaction.Value;
