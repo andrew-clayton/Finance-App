@@ -10,9 +10,8 @@ namespace Finance.Models
     {
         None,
         Grocery,
-        Utility,
+        Gas,
         DiningOut,
-        Personal,
-        Misc
+        Personal
     }
 }

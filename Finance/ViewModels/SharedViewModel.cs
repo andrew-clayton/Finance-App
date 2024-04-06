@@ -49,7 +49,7 @@ namespace Finance.ViewModels
         public IEnumerable<ATransaction> Expenses => CurrentTransactions.Where(t => t.Value < 0);
         public IEnumerable<ATransaction> Revenues => CurrentTransactions.Where(t => t.Value >= 0);
 
-        private DateTime _selectedDate = DateTime.Now;
+        private DateTime _selectedDate;
         public DateTime selectedDate
         {
             get => _selectedDate;
@@ -60,6 +60,7 @@ namespace Finance.ViewModels
                 RefreshCurrentTransactions();
                 var budgetService = new BudgetService();
                 budgetService.InitializeBudgetsForMonth(_selectedDate);
+                SelectedBudget = _budgets.Where(budget => budget.TimeStamp.Month == selectedDate.Month && budget.TimeStamp.Year == selectedDate.Year && budget.Type == Category.None).FirstOrDefault();
             }
         }
 
@@ -127,6 +128,7 @@ namespace Finance.ViewModels
                     OnPropertyChanged(nameof(AmountOfBudgetSpent));
                     OnPropertyChanged(nameof(PercentageOfBudgetSpent));
                     OnPropertyChanged(nameof(AmountAllottedForBudget));
+                    OnPropertyChanged(nameof(Budgets));
                 }
             }
         }
@@ -188,6 +190,7 @@ namespace Finance.ViewModels
         {
             LoadBudgetsFromDatabase();
             // if there is a budget for this month already, I want to have that set by default. otherwise a new one shall be created
+            _selectedDate = DateTime.Now;
             var currentBudget = Budgets.Where(b => b.TimeStamp.Month == DateTime.Now.Month && b.TimeStamp.Year == DateTime.Now.Year).FirstOrDefault();
             if (currentBudget == null)
             {
@@ -215,7 +218,7 @@ namespace Finance.ViewModels
                 RemoveTransaction(transaction);
             }
         }
-        
+
         private bool CanDeleteTransaction(object parameter)
         {
             return parameter != null; // Ensure that a transaction is selected
