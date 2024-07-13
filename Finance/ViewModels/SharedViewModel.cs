@@ -1,18 +1,10 @@
 ﻿using Finance.Models;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Finance.Views;
 using LiveCharts;
 using LiveCharts.Wpf;
-using SQLitePCL;
-using Finance.Views;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows.Input;
-using System.Diagnostics;
 
 
 namespace Finance.ViewModels
@@ -165,7 +157,7 @@ namespace Finance.ViewModels
         #endregion
 
         // Used to refresh UI elements. This was needed since the checkbox to view all transactions was not functioning as intended
-        private void RefreshCurrentTransactions()
+        private async void RefreshCurrentTransactions()
         {
             OnPropertyChanged(nameof(CurrentTransactions));
             OnPropertyChanged(nameof(Expenses));
